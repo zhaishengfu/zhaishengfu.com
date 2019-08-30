@@ -125,14 +125,12 @@
     </ul>
     <div class="post-content">
         <p>Motivation：渲染中很多地方用到了采样，例如<a href="https://hexo.io/" target="_blank" rel="noopener">BSDF采样</a>，[灯光采样]等。每种采样都可以使用重要性采样来降低方差，从而改善采样效果。但是这样还是会存在问题，每种采样适用的场合可能有限，很难做到通用。例如对BSDF进行采样的时候，遇到面积小的光源时，很难采样到光源上的点；而如果对于光源采样，对于光滑的平面，很难采样到反射方向的光辐射。归根结底，原因是因为采样的概率分布和原始信号的值分布不匹配，导致方差变大。所以很自然的想法就是同时进行BSDF采样和光源采样。这样带来的一个问题就是如何整合不同采样的结果？简单的平均并不会降低方差。MIS正是解决多种采样方法之间的匹配问题，最终生成方差低，稳定的综合采样结果。</p>
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
-<h2 id="过程阐述及公式推导"><a href="#过程阐述及公式推导" class="headerlink" title="过程阐述及公式推导"></a>过程阐述及公式推导</h2><h3 id="重要性采样（Importance-Sampling）"><a href="#重要性采样（Importance-Sampling）" class="headerlink" title="重要性采样（Importance Sampling）"></a>重要性采样（Importance Sampling）</h3><p>对于积分</p>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+<h2 id="过程阐述及公式推导"><a href="#过程阐述及公式推导" class="headerlink" title="过程阐述及公式推导"></a>过程阐述及公式推导</h2><h3 id="重要性采样（Importance-Sampling）df"><a href="#重要性采样（Importance-Sampling）df" class="headerlink" title="重要性采样（Importance Sampling）df"></a>重要性采样（Importance Sampling）df</h3><p>对于积分</p>
 <p>$$ \int f(x) dx $$</p>
 <p>其对应的重要性采样是：<br>$$  \frac{1}{N} \sum_{i=1}^{N}\frac{f(X_i)}{p(X_i)}$$<br>其中$ p(X_i) $应当与$f(X_i)$接近，这样最终采样的方差才会小。直观理解就是当样本采样值大的时候，其对最终贡献也应该大，这个时候应该采样概率更大从而尽量多采样这样的点。这是重要性采样最核心的概念。</p>
 <h3 id="多采样模型（The-Multi-sample-Model）"><a href="#多采样模型（The-Multi-sample-Model）" class="headerlink" title="多采样模型（The Multi-sample Model）"></a>多采样模型（The Multi-sample Model）</h3><p>考虑某个积分<br>$$ \int_\Omega f(x) d\mu (x) $$</p>
-<p>假定 $\Omega$, $ f: \Omega \rightarrow \mathbb{R}$, $\mu$都给定，在$\Omega$中我们给定了$n$中不同的采样技术,对应的概率密度函数是$p_1,p_2,…,p_n$.假定只知道下面的信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1.给定\Omega 地方</span><br></pre></td></tr></table></figure>
-
+<p>假定 \(\Omega\) , $ f: \Omega \rightarrow \mathbb{R}$, $\mu$都给定，在$\Omega$中我们给定了$n$中不同的采样技术,对应的概率密度函数是$p_1,p_2,…,p_n$.假定只知道下面的信息</p>
 <p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
 <h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
 
