@@ -129,9 +129,13 @@
 <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 <h2 id="过程阐述及公式推导"><a href="#过程阐述及公式推导" class="headerlink" title="过程阐述及公式推导"></a>过程阐述及公式推导</h2><h3 id="重要性采样（Importance-Sampling）"><a href="#重要性采样（Importance-Sampling）" class="headerlink" title="重要性采样（Importance Sampling）"></a>重要性采样（Importance Sampling）</h3><p>对于积分</p>
 <p>$$ \int f(x) dx $$</p>
-<p>其对应的重要性采样是：<br>$$  \frac{1}{N} \sum_{i=1}^{N}\frac{f(X_i)}{p(X_i)}$$<br>其中$ p(X_i) $应当与$f(X_i)$接近，这样最终采样的方差才会小。直观理解就是当样本采样值大的时候，其对最终贡献也应该大，这个时候应该采样概率更大从而尽量多采样这样的点。这是重要性采样最核心的概念。</p>
+<p>其对应的重要性采样是：<br>$$  \frac{1}{N} \sum_{i=1}^{N}\frac{f(X_i)}{p(X_i)}$$<br>其中 \(p(X_i)\)应当与 \(f(X_i)\)接近，这样最终采样的方差才会小。直观理解就是当样本采样值大的时候，其对最终贡献也应该大，这个时候应该采样概率更大从而尽量多采样这样的点。这是重要性采样最核心的概念。</p>
 <h3 id="多采样模型（The-Multi-sample-Model）"><a href="#多采样模型（The-Multi-sample-Model）" class="headerlink" title="多采样模型（The Multi-sample Model）"></a>多采样模型（The Multi-sample Model）</h3><p>考虑某个积分<br>$$ \int_\Omega f(x) d\mu (x) $$</p>
 <p>假定 \(\Omega\) , \(f: \Omega \rightarrow \mathbb{R}\), \(\mu\)都给定，在\(\Omega\)中我们给定了\(n\)中不同的采样技术,对应的概率密度函数是\(p_1,p_2,…,p_n\).假定只知道下面的信息</p>
+<!-- * 给定任意点\\(x\\) \\(\in\\) \\(\Omega\\), f(x) -->
+<ul>
+<li>\(给定任意点x \in \Omega, f(x), f(x)和p_i(x)都可以得到\)</li>
+</ul>
 <p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
 <h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
 
