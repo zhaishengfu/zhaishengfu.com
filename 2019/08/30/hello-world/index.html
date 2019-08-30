@@ -140,7 +140,9 @@
 <p>为了估计积分,不同的采样方法会生成多种样本.用\(n_i\)表示\(p_i\)采样方法的样本数量,用\(N=\sum n_i\)表示所有样本的总数目.假定每种采样方法的采样数据都是固定的,采样方法\(i\)得到的样本是\(X_{i,j}\), 其中\(j = 1,2,…,n_i)\).所有的样本假定是独立的.</p>
 <h4 id="多采样估计器-The-multi-sample-estimator"><a href="#多采样估计器-The-multi-sample-estimator" class="headerlink" title="多采样估计器(The multi-sample estimator)"></a>多采样估计器(The multi-sample estimator)</h4><p>现在我们看一下如何用\(X_{i,j}\)来估计积分.我们将每种采样方法给一个权重\(\omega_1, \omega_2,…,\omega_n\),其中\(\omega_i(x)\)对于利用\(p_i)采样技术得到的每个样本x都会给一个权重.多采样估计器的公式是:</p>
 <p>$$F = \sum_{i=1}^N \frac{1}{n_i} \sum_{j=1}^{n_i} \omega_i(X_{i,j}) \frac{f(X_{i,j})}{p_i(X_{i,j})}$$<br>要想使得该估计器是无偏的,权重函数\(\omega_i\)必须满足下面条件:</p>
-<p> \(当f(x)\ne 0 , \sum_{i=1}^n \omega_i(x) = 1 \tag{W1}\)<br> \(当p_i(x) = 0, \omega_i(x)  = 0 \tag{W2}\)<br>从上面的式子我们可以有一些直观的理解.例如<strong>W1</strong>式子我们可以知道当\(f(x) \ne 0\)时,必定有至少一个</p>
+<p> \(当f(x)\ne 0 , \sum_{i=1}^n \omega_i(x) = 1 \tag{W1}\)<br> \(当p_i(x) = 0, \omega_i(x)  = 0 \tag{W2}\)<br>从上面的式子我们可以有一些直观的理解.例如<strong>W1</strong>式子我们可以知道当\(f(x) \ne 0\)时,必定有至少一个\(\omega_i\)为正数,因此必定有至少一个\(p_i\)为正数.也就是说,必定至少一个采样方法会在\(x\)处采样.另外我们可以看出来,没有必要每种采样技术采样所有的\(\Omega\).某些采样方法\(p_i\)可以专注于积分的特定区域.</p>
+<p>当上面两个条件满足的时候,\(F\)就是无偏的,因为此时\(F\)的期望就是\(f(x)\)的积分:<br>$$E[F]= \int_\Omega f(x) d \mu(x)$$<br>证明过程如下:</p>
+<p>$$<br>\begin{aligned}<br>E[F]= \sum_{i=1}^n \frac{1}{n_i} \sum_{j=1}^{n_i} \int_\Omega \frac{\omega_i(x)f(x)}{p_i(x)} p_i(x) d \mu(x)<br> \\ = \int_\Omega \sum_{i=1}^n \frac{1}{n_i} \sum_{j=1}^{n_i}  \omega_i(x)f(x) \mu(x)<br>\\ = \int_\Omega \sum_{i=1}^n  \omega_i(x)f(x) d \mu(x)<br> \\ = \int \Omega f(x) d\mu(x)<br> \end{aligned}<br>$$</p>
 <h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
 
 <p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
