@@ -128,36 +128,25 @@
 <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
 <h2 id="过程阐述及公式推导"><a href="#过程阐述及公式推导" class="headerlink" title="过程阐述及公式推导"></a>过程阐述及公式推导</h2><h3 id="重要性采样（Importance-Sampling）"><a href="#重要性采样（Importance-Sampling）" class="headerlink" title="重要性采样（Importance Sampling）"></a>重要性采样（Importance Sampling）</h3><p>对于积分</p>
-<script type="math/tex; mode=display">\int f(x) dx</script><p>其对应的重要性采样是：</p>
-<script type="math/tex; mode=display">\frac{1}{N} \sum_{i=1}^{N}\frac{f(X_i)}{p(X_i)}</script><p>其中 \(p(X_i)\)应当与 \(f(X_i)\)接近，这样最终采样的方差才会小。直观理解就是当样本采样值大的时候，其对最终贡献也应该大，这个时候应该采样概率更大从而尽量多采样这样的点。这是重要性采样最核心的概念。</p>
-<h3 id="多采样模型（The-Multi-sample-Model）"><a href="#多采样模型（The-Multi-sample-Model）" class="headerlink" title="多采样模型（The Multi-sample Model）"></a>多采样模型（The Multi-sample Model）</h3><p>考虑某个积分</p>
-<script type="math/tex; mode=display">\int_\Omega f(x) d\mu (x)</script><p>假定 \(\Omega\) , \(f: \Omega \rightarrow \mathbb{R}\), \(\mu\)都给定，在\(\Omega\)中我们给定了\(n\)中不同的采样技术, 对应的概率密度函数是\(p_1, p_2, …, p_n\). 假定只知道下面的信息<br><!-- * 给定任意点\\(x\\) \\(\in\\) \\(\Omega\\), f(x) --></p>
+<p>$$ \int f(x) dx $$</p>
+<p>其对应的重要性采样是：<br>$$  \frac{1}{N} \sum_{i=1}^{N}\frac{f(X_i)}{p(X_i)}$$<br>其中 \(p(X_i)\)应当与 \(f(X_i)\)接近，这样最终采样的方差才会小。直观理解就是当样本采样值大的时候，其对最终贡献也应该大，这个时候应该采样概率更大从而尽量多采样这样的点。这是重要性采样最核心的概念。</p>
+<h3 id="多采样模型（The-Multi-sample-Model）"><a href="#多采样模型（The-Multi-sample-Model）" class="headerlink" title="多采样模型（The Multi-sample Model）"></a>多采样模型（The Multi-sample Model）</h3><p>考虑某个积分<br>$$ \int_\Omega f(x) d\mu (x) $$</p>
+<p>假定 \(\Omega\) , \(f: \Omega \rightarrow \mathbb{R}\), \(\mu\)都给定，在\(\Omega\)中我们给定了\(n\)中不同的采样技术, 对应的概率密度函数是\(p_1, p_2, …, p_n\). 假定只知道下面的信息</p>
+<!-- * 给定任意点\\(x\\) \\(\in\\) \\(\Omega\\), f(x) -->
+
 <ul>
 <li>\(给定任意点x \in \Omega, f(x)和p_i(x)都可以得到\)</li>
 <li>\(对于任何p_i, 都可以产生一个样本X\)</li>
 </ul>
 <p>为了估计积分, 不同的采样方法会生成多种样本. 用\(n_i\)表示\(p_i\)采样方法的样本数量, 用\(N=\sum n_i\)表示所有样本的总数目. 假定每种采样方法的采样数据都是固定的, 采样方法\(i\)得到的样本是\(X_{i, j}\), 其中\(j = 1, 2, …, n_i)\). 所有的样本假定是独立的.</p>
 <h4 id="多采样估计器-The-multi-sample-estimator"><a href="#多采样估计器-The-multi-sample-estimator" class="headerlink" title="多采样估计器(The multi-sample estimator)"></a>多采样估计器(The multi-sample estimator)</h4><p>现在我们看一下如何用\(X_{i, j}\)来估计积分. 我们将每种采样方法给一个权重\(\omega_1, \omega_2, …, \omega_n\), 其中\(\omega_i(x)\)对于利用\(p_i)采样技术得到的每个样本x都会给一个权重. 多采样估计器的公式是:</p>
-<script type="math/tex; mode=display">F = \sum_{i=1}^N \frac{1}{n_i} \sum_{j=1}^{n_i} \omega_i(X_{i, j}) \frac{f(X_{i, j})}{p_i(X_{i, j})}</script><p>要想使得该估计器是无偏的, 权重函数\(\omega_i\)必须满足下面条件:</p>
+<p>$$F = \sum_{i=1}^N \frac{1}{n_i} \sum_{j=1}^{n_i} \omega_i(X_{i, j}) \frac{f(X_{i, j})}{p_i(X_{i, j})}$$<br>要想使得该估计器是无偏的, 权重函数\(\omega_i\)必须满足下面条件:</p>
 <p> \(当f(x)\ne 0 , \sum_{i=1}^n \omega_i(x) = 1 \tag{W1}\)<br> \(当p_i(x) = 0, \omega_i(x)  = 0 \tag{W2}\)<br>从上面的式子我们可以有一些直观的理解. 例如<strong>W1</strong>式子我们可以知道当\(f(x) \ne 0\)时, 必定有至少一个\(\omega_i\)为正数, 因此必定有至少一个\(p_i\)为正数. 也就是说, 必定至少一个采样方法会在\(x\)处采样. 另外我们可以看出来, 没有必要每种采样技术采样所有的\(\Omega\). 某些采样方法\(p_i\)可以专注于积分的特定区域.</p>
-<p>当上面两个条件满足的时候, \(F\)就是无偏的, 因为此时\(F\)的期望就是\(f(x)\)的积分:</p>
-<script type="math/tex; mode=display">E[F]= \int_\Omega f(x) d \mu(x)</script><p>证明过程如下:</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-E[F]= \sum_{i=1}^n \frac{1}{n_i} \sum_{j=1}^{n_i} \int_\Omega \frac{\omega_i(x)f(x)}{p_i(x)} p_i(x) d \mu(x) 
- \\\ = \int_\Omega \sum_{i=1}^n \frac{1}{n_i} \sum_{j=1}^{n_i}  \omega_i(x)f(x) \mu(x) 
-\\\ = \int_\Omega \sum_{i=1}^n  \omega_i(x)f(x) d \mu(x) 
- \\\ = \int \Omega f(x) d\mu(x)
- \end{aligned}</script><p>接下来我们将看一些例子来加深理解.</p>
-<h4 id="权重函数的一些例子"><a href="#权重函数的一些例子" class="headerlink" title="权重函数的一些例子"></a>权重函数的一些例子</h4><p>假定有三种采样技术\( p_1, p_2, p_3\), 并且每种方法都采样一个样本\(X_{i, 1}\). 首先, 考虑权重函数在整个\(\Omega\)都是常数. 这样最终的估计器是</p>
-<script type="math/tex; mode=display">F = \omega_1 \frac{f(X_{1, 1})}{p_1(X_{1, 1})} + \omega_2 \frac{f(X_{2, 1})}{p_1(X_{2, 1})} + \omega_3 \frac{f(X_{3, 1})}{p_1(X_{3, 1})}</script><p>其中\(\omega_i\)加起来和为1. 这实际上就是每个采样技术的加权组合. 不幸的是这种组合策略效果并不好. 如果任何给定的采样技术方差很大, 那么最终的F方差也会很大, 因为</p>
-<script type="math/tex; mode=display">V[F] = \omega_1V[F_1] + \omega_2V[F_2] +\omega_3V[F_3]</script><p>另外一个可能的组合策略是将\(\Omega\)在采样技术上进行分割, 即</p>
-<script type="math/tex; mode=display">\int f(x)d\mu(x) = \sum_{i=1}^n \int_{\Omega_i} f(x) d \mu(x)</script><p>在每个\(\Omega_i\), 分别采用不同的采样技术\(p_i\). 对应的权重函数是:</p>
-<script type="math/tex; mode=display">
-\omega_i=\begin{cases}
-1, & \text{如果$ i \in \Omega_i $}\\
-0, & \text{其他情况}
-\end{cases}</script><p>这种方法在计算机图形学中广泛使用, 但是如果分割方法不好的话, 组合效果会比较差. 例如我们经常将场景分成光源区域和非光源区域, 每种区域采用不同的采样方法. 由于场景的几何体和材质的不同, 固定的分布会导致更高的方差.</p>
+<p>当上面两个条件满足的时候, \(F\)就是无偏的, 因为此时\(F\)的期望就是\(f(x)\)的积分:<br>$$E[F]= \int_\Omega f(x) d \mu(x)$$<br>证明过程如下:</p>
+<p>$$<br>\begin{aligned}<br>E[F]= \sum_{i=1}^n \frac{1}{n_i} \sum_{j=1}^{n_i} \int_\Omega \frac{\omega_i(x)f(x)}{p_i(x)} p_i(x) d \mu(x)<br> \\ = \int_\Omega \sum_{i=1}^n \frac{1}{n_i} \sum_{j=1}^{n_i}  \omega_i(x)f(x) \mu(x)<br>\\ = \int_\Omega \sum_{i=1}^n  \omega_i(x)f(x) d \mu(x)<br> \\ = \int \Omega f(x) d\mu(x)<br> \end{aligned}<br>$$<br>接下来我们将看一些例子来加深理解.</p>
+<h4 id="权重函数的一些例子"><a href="#权重函数的一些例子" class="headerlink" title="权重函数的一些例子"></a>权重函数的一些例子</h4><p>假定有三种采样技术\( p_1, p_2, p_3\), 并且每种方法都采样一个样本\(X_{i, 1}\). 首先, 考虑权重函数在整个\(\Omega\)都是常数. 这样最终的估计器是<br>$$F = \omega_1 \frac{f(X_{1, 1})}{p_1(X_{1, 1})} + \omega_2 \frac{f(X_{2, 1})}{p_1(X_{2, 1})} + \omega_3 \frac{f(X_{3, 1})}{p_1(X_{3, 1})}$$</p>
+<p>其中\(\omega_i\)加起来和为1. 这实际上就是每个采样技术的加权组合. 不幸的是这种组合策略效果并不好. 如果任何给定的采样技术方差很大, 那么最终的F方差也会很大, 因为<br>$$V[F] = \omega_1V[F_1] + \omega_2V[F_2] +\omega_3V[F_3]$$<br>另外一个可能的组合策略是将\(\Omega\)在采样技术上进行分割, 即<br>$$\int f(x)d\mu(x) = \sum_{i=1}^n \int_{\Omega_i} f(x) d \mu(x)$$<br>在每个\(\Omega_i\), 分别采用不同的采样技术\(p_i\). 对应的权重函数是:</p>
+<p> $$<br>\omega_i=\begin{cases}<br>1, &amp; \text{如果$ i \in \Omega_i $}\<br>0, &amp; \text{其他情况}<br>\end{cases}<br>$$<br>这种方法在计算机图形学中广泛使用, 但是如果分割方法不好的话, 组合效果会比较差. 例如我们经常将场景分成光源区域和非光源区域, 每种区域采用不同的采样方法. 由于场景的几何体和材质的不同, 固定的分布会导致更高的方差.</p>
 <h4 id="多采样模型的通用性"><a href="#多采样模型的通用性" class="headerlink" title="多采样模型的通用性"></a>多采样模型的通用性</h4>
     </div>
 </article>
