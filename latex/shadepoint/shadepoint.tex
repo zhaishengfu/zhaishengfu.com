@@ -11,45 +11,165 @@
  
 \begin{document}
     \begin{algorithm}
-        \caption{对某个像素点进行着色}
+        \caption{对某个像素点进行着色,ShadingEngine}
         \begin{algorithmic}[1] %每行显示行号
-            \Require 采样$sample$信息,像素$pixel$信息,着色$shading$信息,着色点$shading\_point$信息
+            \Require 采样$sample$信息sac,像素$pixel$信息pc,着色$shading$信息shc,着色点$shading\_point$信息sp
             \Ensure shading\_result
-            \Function {shade\_hit\_point}{$sampling_context, pixel_context, shading_context, shading_point$}
-                \State $result \gets 0$
-                \If {$left < right$}
-                    \State $middle \gets (left + right) / 2$
-                    \State $result \gets result +$ \Call{MergerSort}{$Array, left, middle$}
-                    \State $result \gets result +$ \Call{MergerSort}{$Array, middle, right$}
-                    \State $result \gets result +$ \Call{Merger}{$Array,left,middle,right$}
+            \Function {shade\_hit\_point}{$sac, pc, shc, sp$}
+                \State $shading\_result.main.a \gets sp.a$ [ material的alpha map]
+			\State $material \gets sp.get\_material()$
+			\If {$shading\_result.main.a > 0$}
+				\State $ surface\_shader \gets$  \Call{GetSurfaceShader}{$material$} 
+				\State $ shading\_result.main.rgb \gets surface\_shader.$ \Call {evaluate}{$sac,pc,shc,sp$}
+				\State  \Call {apply\_alpha\_premult}{$shading\_result$}
                 \EndIf
-                \State \Return{$result$}
+			\State \Return{ $false$}
+
             \EndFunction
             \State
-            \Function{Merger}{$Array, left, middle, right$}
-                \State $i\gets left$
-                \State $j\gets middle$
-                \State $k\gets 0$
-                \State $result \gets 0$
-                \While{$i<middle$ \textbf{and} $j<right$}
-                    \If{$Array[i]<Array[j]$}
-                        \State $B[k++]\gets Array[i++]$
-                    \Else
-                        \State $B[k++] \gets Array[j++]$
-                        \State $result \gets result + (middle - i)$
-                    \EndIf
-                \EndWhile
-                \While{$i<middle$}
-                    \State $B[k++] \gets Array[i++]$
-                \EndWhile
-                \While{$j<right$}
-                    \State $B[k++] \gets Array[j++]$
-                \EndWhile
-                \For{$i = 0 \to k-1$}
-                    \State $Array[left + i] \gets B[i]$
-                \EndFor
-                \State \Return{$result$}
+            \Function{GetSurfaceShader}{$material$}
+            	\If {$has\_diagnostic\_surface\_shader$}
+            		\State \Return {$diagnostic\_surface\_shader$}
+            	\Else
+            		\State \Return {$material.m\_surface\_shader$}
+            	\EndIf
             \EndFunction
+            \State
+            \Function {PhysicalSurfaceShader::evaluate}{$sac,pc,shc,sp$}
+            	\State $basis \gets sp.get\_shading\_basis()$
+            	\State $shading\_components \gets shc.get\_lighting\_engine.$ \Call {compute\_lighting}{$sac,pc,shc,sp$}
+            	\If{$m\_lighting\_samples > 1$}
+	            	\For{$1:m_lighting\_samples -1$}
+	            		\State $sp.set\_shading\_basis(basis)$
+	            		\State $shading\_components \gets shc.get\_lighting\_engine.$ \Call {compute\_lighting}{$sac, pc, shc, sp$}
+				\EndFor
+				\State $shading\_components  /=  m\_lighting\_samples$
+            	\EndIf
+            	\If {$has\_npr$}
+				\State $NPRSurfaceShaderHelper.$ \Call {evaluate}{$sac, shc, sp$}
+            	\EndIf
+            	\State \Return {$shading\_components.m\_beauty.rgb$}
+            \EndFunction
+            \State
+            \Function {PTLightingEngine::compute\_lighting<b\_next\_event\_estimation>}{$sac, shc, sp$}
+            	\State  $ [path\_length, shading\_components] \gets path\_tracer.$ \Call {trace}{sac, shc, sp}
+            	\State \Return{$shading\_components$}
+            \EndFunction
+            \State
+      
         \end{algorithmic}
     \end{algorithm}
+
+\begin{algorithm}
+	\caption{路径追踪,PathTracer::trace}
+		\begin{algorithmic} %每行显示行号
+			\Function {PathTracer::trace}{$sac, shc, sp$}
+				\State  $vertex.path\_length \gets 1$
+				\State  $vertex.scattering\_modes \gets  ALL$
+				\State	$vertex.throughput \gets 1$
+				\State	$vertex.shading\_point \gets sp$
+				\State 	$vertex.prev\_mode \gets Specular$
+				\State	$vertex.prev\_prob \gets DiracDelta(-1)$
+				\State	$diffuse\_bounces \gets glossy\_bounces \gets specular\_bounces \gets iterations \gets 0$
+				\While {$true$}
+					\State $ray \gets vertex.shading\_point.get\_ray()$
+					\State $vertex.outgoing = -ray$
+					\If {$vertex.shading\_point.hit\_surface()$}
+						\State	$material \gets vertex.get\_material()$
+						\If {$material$}
+							\State $object\_instance \gets vertex.shading\_points.get\_object\_instance()$
+							\If {\Call {PassThrough}{$vertex,sac$}}
+								\State $next\_ray \gets ray$
+								\State $next\_ray.ori \gets ray.hit\_point$
+								\State $intersector \gets shc.get\_intersector()$
+								\State $next\_shading\_point \gets intersector.$ \Call {trace}{next\_ray, vertex.shading\_point}
+								\State $vertex.shading\_point = next\_shading\_point$
+								\State \textbf {Continue}
+							\Else 
+							\State \Call {NormalBounce}{$vertex, material$}
+							\EndIf
+						\EndIf
+					\EndIf
+				\EndWhile
+			\EndFunction
+			\State
+			\Function{PassThrough}{$vertex, sac$}
+				\If {$vertex.path\_length > 1$}
+					\State $alpha \gets vertex.shading\_point.get\_alpha()$
+					\If {sac.random() >= alpha || alpha <= 0 }
+						\State \Return {true}
+					
+					\EndIf
+				\EndIf
+				\State \Return {false}
+			\EndFunction
+
+		\end{algorithmic}
+		
+\end{algorithm}
+\begin{algorithm}
+	\caption{正常处理,NormalBounce}
+		\begin{algorithmic} %每行显示行号
+			\Function{NormalBounce}{$vertex,material$}
+				
+				\State $vertex.edf \gets material.edf$
+				\State $vertex.bsdf \gets material.bsdf$
+				\State $vertex.bssrdf \gets material.bssrdf$
+				\State $vertex.cos\_on \gets dot(vertex.outgoing, vertex.shading\_normal)$
+				\State \Call {EmittedLightContribution}{$vertex$}
+				\If {\Call {RussianRoulette}{$sac, vertex$}}
+					\State \Call {ProcessHit}{$vertex$}
+				\EndIf
+				
+			\EndFunction
+			\State
+			\Function{EmittedLightContribution}{$vertex$}
+				
+				\If{$vertex.edf  \And  vertex.cos\_on  $}
+					\State $ emitted\_radiance \gets $\Call{AddEmittedLightContribution}{$vertex$}
+					\State $emitted\_radiance *= vertex.throughput$
+					\State $shading\_components.$ \Call {AddEmission}{$vertex.path\_length, emitted\_radiance$}
+				\EndIf
+				
+			\EndFunction
+			\State
+			\Function{RussianRoulette}{sac, vertex}
+				\If{$vertex.path\_length <= rr\_min\_path\_length$}
+					\State \Return {$true$}
+				\Else
+					\State $scattering\_prob \gets vertex.throughput$
+					\If {$scattering\_prob < sac.random()$}
+						\State \Return {$false$}
+					\Else
+						\State {$vertex.throughput /= scattering\_prob$}
+						\State \Return {$true$}
+					\EndIf
+				\EndIf
+			\EndFunction
+		\end{algorithmic}
+\end{algorithm}
+
+
+
+\begin{algorithm}
+\caption{正常处理,ProcessHit}
+		\begin{algorithmic} %每行显示行号
+		\Function{ProcessHit}{sac, vertex}
+				\If{\Call {ContinueProcess}$$}
+					\If {$IsSubSurface$}
+						\State \Call{ProcessSubSurface}$$
+						\State \Call {UpdateVertex}$$
+					\EndIf
+					\If {$IsBSDF$}
+						\State \Call{ProcessBSDF}$$
+						\State $next\_shading\_point \gets intersector.trace()$
+						\State $vertex.parent\_shading\_point = vertex.shading\_point$
+						\State $vertex.shading\_point = next\_shading\_point$
+					\EndIf
+					\State \Return {$true$}
+				
+				\EndIf
+			\EndFunction
+		\end{algorithmic}
+\end{algorithm}
 \end{document}
