@@ -158,7 +158,7 @@
 <p>$$<br>\begin{aligned}<br>E[F]= \sum_{i=1}^n \frac{1}{n_i} \sum_{j=1}^{n_i} \int_\Omega \frac{\omega_i(x)f(x)}{p_i(x)} p_i(x) d \mu(x)<br> \\ = \int_\Omega \sum_{i=1}^n \frac{1}{n_i} \sum_{j=1}^{n_i}  \omega_i(x)f(x) \mu(x)<br>\\ = \int_\Omega \sum_{i=1}^n  \omega_i(x)f(x) d \mu(x)<br> \\ = \int \Omega f(x) d\mu(x)<br> \end{aligned}<br>$$<br>接下来我们将看一些例子来加深理解.</p>
 <h4 id="权重函数的一些例子"><a href="#权重函数的一些例子" class="headerlink" title="权重函数的一些例子"></a>权重函数的一些例子</h4><p>假定有三种采样技术\( p_1, p_2, p_3\), 并且每种方法都采样一个样本\(X_{i, 1}\). 首先, 考虑权重函数在整个\(\Omega\)都是常数. 这样最终的估计器是<br>$$F = \omega_1 \frac{f(X_{1, 1})}{p_1(X_{1, 1})} + \omega_2 \frac{f(X_{2, 1})}{p_1(X_{2, 1})} + \omega_3 \frac{f(X_{3, 1})}{p_1(X_{3, 1})}$$</p>
 <p>其中\(\omega_i\)加起来和为1. 这实际上就是每个采样技术的加权组合. 不幸的是这种组合策略效果并不好. 如果任何给定的采样技术方差很大, 那么最终的F方差也会很大, 因为<br>$$V[F] = \omega_1V[F_1] + \omega_2V[F_2] +\omega_3V[F_3]$$<br>另外一个可能的组合策略是将\(\Omega\)在采样技术上进行分割, 即<br>$$\int f(x)d\mu(x) = \sum_{i=1}^n \int_{\Omega_i} f(x) d \mu(x)$$<br>在每个\(\Omega_i\), 分别采用不同的采样技术\(p_i\). 对应的权重函数是:</p>
-<p> $$<br>\omega_i=\begin{cases}<br>1, &amp; \text{如果$ i \in \Omega_i $}\<br>0, &amp; \text{其他情况}<br>\end{cases}<br>$$<br>这种方法在计算机图形学中广泛使用, 但是如果分割方法不好的话, 组合效果会比较差. 例如我们经常将场景分成光源区域和非光源区域, 每种区域采用不同的采样方法. 由于场景的几何体和材质的不同, 固定的分布会导致更高的方差.</p>
+<p>$$<br>\omega_i=\begin{cases}<br>1, &amp; \text{如果$ i \in \Omega_i $} \\<br>0, &amp; \text{其他情况}<br>\end{cases}<br>$$<br>这种方法在计算机图形学中广泛使用, 但是如果分割方法不好的话, 组合效果会比较差. 例如我们经常将场景分成光源区域和非光源区域, 每种区域采用不同的采样方法. 由于场景的几何体和材质的不同, 固定的分布会导致更高的方差.</p>
 <h4 id="多采样模型的通用性"><a href="#多采样模型的通用性" class="headerlink" title="多采样模型的通用性"></a>多采样模型的通用性</h4>
     </div>
 </article>
