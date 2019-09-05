@@ -139,7 +139,12 @@
         <p>Motivation: 渲染的输出是一张2D的像素网格, 是离散的. 入射辐射亮度实际上是定义在胶片平面的连续函数. 从连续到离散就必定会带来质量下降. 下降的多少决定了最终渲染输出的效果的好坏. 而从连续信号到离散信号的过程一般称为采样. 良好的采样方法应该产生低差异(low-discrepancy)采样点. 采样结束之后我们还希望从采样结果中能恢复原始信号, 这个过程叫做重建.</p>
 <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
-<p>##采样理论<br>数字图像是一系列像素值的网格. 像素值用来决定显示的物理设备发射的光谱能量. 首先需要区分图像像素和显示像素. 图像像素是特定采样位置的函数值, 而显示像素是以一定分布发射光的物理器件. 物理器件使用图像像素值来构建显示设备表面的新的图像函数, 这个函数在显示设备的所有点都有定义, 而不仅仅是图像像素的点. 因而, 我们生成数字图像的过程实际上是将物理器件的连续图像函数用数字图像的像素离散化采样得到的.<br>采样中不得不提到的一个重要技术就是傅里叶分析. 傅里叶分析从频率与考虑信号的采样和重建的相关问题, 并可以用来评估重建信号和原始信号的匹配度.<br><img src="/2019/09/04/Sample/sampleandreconstruction.png" alt="采样和重建"></p>
+<p>##采样理论<br>数字图像是一系列像素值的网格. 像素值用来决定显示的物理设备发射的光谱能量. 首先需要区分图像像素和显示像素. 图像像素是特定采样位置的函数值, 而显示像素是以一定分布发射光的物理器件. 物理器件使用图像像素值来构建显示设备表面的新的图像函数, 这个函数在显示设备的所有点都有定义, 而不仅仅是图像像素的点. 因而, 我们生成数字图像的过程实际上是将物理器件的连续图像函数用数字图像的像素离散化采样得到的.<br>采样中不得不提到的一个重要技术就是傅里叶分析. 傅里叶分析从频率与考虑信号的采样和重建的相关问题, 并可以用来评估重建信号和原始信号的匹配度.</p>
+<center> 
+
+<p><img src="/2019/09/04/Sample/sampleandreconstruction.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.1: 采样和重建</p>
+</center>
+
 <h3 id="频率域和傅里叶变换"><a href="#频率域和傅里叶变换" class="headerlink" title="频率域和傅里叶变换"></a>频率域和傅里叶变换</h3><p>傅里叶分析的基础之一就是傅里叶变换, 他是频率域中的一个函数. 事实上大多数函数都可以分解成偏移的正弦曲线的加权和. 这个惊人的事实第一次被<strong>Joseph Fourier</strong>发现, 而傅里叶变换就是进行这个分解的过程. 频率域可以给我们一个原始信号某些特点的更深入的理解.1D函数\(f(x)\)的傅里叶变换是:<br>$$ F(\omega) = \int_{-\infty}^\infty f(x) e^{-  \boldsymbol{i} 2\pi \omega x} dx$$<br>其中i是复数项, i =\(\sqrt{ -1}\). 并且<br>$$ e^ {\boldsymbol{i} x} = cosx +  \boldsymbol{i} sinx$$<br>从频率域当然也可以变换回空间域:<br>$$ f(x) = \int_{-\infty}^\infty F(\omega) e^{  \boldsymbol{i} 2\pi \omega x} d \omega$$</p>
 <p>如果想要更深刻的理解, 建议去查阅更详细的傅里叶分析介绍.<br>我们考虑空间域常数为1的函数<br>$$ f(x) = 1$$</p>
 <p>这个函数可以认为频率为0, 也就是没有任何变化. 但是整个基本区域的积分值为1, 所以频率为0的函数值可以认为无限大(并不是无穷大, 但是可以简单理解为无穷大). 这个函数是傅里叶分析中一个特殊的函数, 叫做Dirac delta函数<br>$$<br>\begin{cases}<br>\int \delta(x)dx =1 \\<br>\delta(x) =0, x \ne 0<br>\end{cases}<br>$$</p>
@@ -148,12 +153,23 @@
 <p>其中T叫做采样频率,或者周期.将脉冲序列函数和原始信号相乘,就得到了均匀的无穷序列采样值.<br>$$S(x) = \bigvee_T(x)f(x) = T \sum_i \delta(x - i T)f(iT)$$</p>
 <p>上面的采样信号想要重建的话,就是运行一个重建滤波函数并进行卷积操作:</p>
 <p>$$\tilde{f}(x) = S(x) \otimes r(x)$$, 而\(\otimes \)的运算是:<br>$$f(x) \otimes g(x) = \int_{- \infty}^{\infty} f(x’) g(x - x’) dx’$$<br>所以可以得到:<br>$$<br>\tilde{f}(x) =  T \sum_i \delta(x - i T)f(iT)  \otimes r(x) \\<br>= \int_{- \infty}^{\infty} T \sum_i \delta(x’ - i T)f(iT) r(x - x’) dx’ \\<br> = T \sum_{i= {-\infty}}^{\infty} f(iT) r(x - iT)<br>$$<br>傅里叶变化的一个重要性质就是:两个函数的乘积的傅里叶变换等于每个函数单独傅里叶变换的卷积, 即<br>$$\mathcal{F} \{f(x)g(x)\} = F(\omega) \otimes G(\omega)$$<br>反之亦然.即空间域和频率域的卷积和相乘可以互相转化.因而上面的重建操作的卷积可以用频率域的相乘代替. shah函数及其对应的频率域表达分别是:<br>$$  \bigvee_T(x)= T \sum_i \delta(x - i T)\Longleftrightarrow  \bigvee_{1/T}(\omega) = (1/T) \sum_i \delta (\omega - i / T)$$</p>
-<p>这里值得注意的一点是,shah函数的空间域和频域函数的周期是倒数关系,这意味着如果空间域的样本距离很大,那么频率域的样本距离很小.<br>因而采样信号的频率域表达\(\mathcal{F} (S(x))\)可以由\(F(\omega)\)和上面的shah的频率域函数的卷积得到.而将函数与delta函数进行卷积得到的就是原函数的若干复制,所以shah函数卷积会得到原始函数的无穷多的序列复制,等距分布, 周期和shah的周期一样.这就是样本序列的频率空间的表达!!<br>很显然,想要得到原始信号,应该将除了原点周围的信号全部去除掉.我们可以采用一个箱函数<strong>box function</strong>来进行这个操作. 假定箱函数宽度为\(T\),则箱函数定义是:<br>$$<br>\Pi_T(x)=\begin{cases}<br>1 / 2T, &amp; \text{如果$ \vert{x}\vert &lt;T $} \\<br>0, &amp; \text{其他情况}<br>\end{cases}<br>$$<br>频率域的相乘意味着空间域的卷积,所以这里我们相乘得到重建信号的频率表示:<br>$$\tilde{F} = (F(\omega) \otimes \bigvee_{1/T}(\omega)) \Pi_T(\omega)$$</p>
+<p>这里值得注意的一点是,shah函数的空间域和频域函数的周期是倒数关系,这意味着如果空间域的样本距离很大,那么频率域的样本距离很小.<br>因而采样信号的频率域表达\(\mathcal{F} (S(x))\)可以由\(F(\omega)\)和上面的shah的频率域函数的卷积得到.而将函数与delta函数进行卷积得到的就是原函数的若干复制,所以shah函数卷积会得到原始函数的无穷多的序列复制,等距分布, 周期和shah的周期一样.这就是样本序列的频率空间的表达!!</p>
+<center> 
+
+<p><img src="/2019/09/04/Sample/Fconv.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.1: 样本频率空间和Shah函数卷积结果</p>
+</center>
+
+<p>很显然,想要得到原始信号,应该将除了原点周围的信号全部去除掉.我们可以采用一个箱函数<strong>box function</strong>来进行这个操作. 假定箱函数宽度为\(T\),则箱函数定义是:<br>$$<br>\Pi_T(x)=\begin{cases}<br>1 / 2T, &amp; \text{如果$ \vert{x}\vert &lt;T $} \\<br>0, &amp; \text{其他情况}<br>\end{cases}<br>$$<br>频率域的相乘意味着空间域的卷积,所以这里我们相乘得到重建信号的频率表示:<br>$$\tilde{F} = (F(\omega) \otimes \bigvee_{1/T}(\omega)) \Pi_T(\omega)$$</p>
 <p>我们重新梳理一遍.</p>
 <p>空间域: 原始信号\(f(x)\), 周期为T的采样函数shah函数\(\bigvee_T(x)\), 采样信号\(S(x)\), 重建信号\(\tilde{f}(x)\).<br>频率域:原始信号\(F(\omega)\), shan函数\(\bigvee_{1/T}(\omega)\), 采样信号\(S(\omega)\),重建信号\(\tilde{F}(\omega)\)</p>
 <p>则空间域<br>$$S(x) = \bigvee_T(x)f(x)$$<br>$$\tilde{f}(x) = S(x) \otimes r(x)$$<br>频率域:<br>$$S(\omega) = \bigvee_{1/T}(\omega) \otimes F(\omega)$$<br>$$\tilde{F}(\omega) = S(\omega)  \Pi_T(\omega)$$</p>
 <p>所以要想完美重建信号,需要找到完美箱函数\(\Pi_T(x)\)的空间域表达.箱函数的逆傅里叶变换是\(sinc\)函数,所以理想的空间域重建是:<br>$$\tilde{f}(x) = S(x) \otimes r(x) = \sum_{i= - \infty}^ \infty sinc(x - i)f(i)$$</p>
 <p>悲剧的是,因为sinc函数具有无限的边界,所以必须使用\(f(i)\)的所有采样值来计算空间域的某个特定值\(\tilde{f}(x)\). 实际使用只会采取一定范围之内.</p>
+<center> 
+
+<p><img src="/2019/09/04/Sample/%E7%90%86%E6%83%B3%E9%87%8D%E5%BB%BA.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.1: 理想重建过程</p>
+</center>
+
 <h3 id="混叠-aliasing"><a href="#混叠-aliasing" class="headerlink" title="混叠(aliasing)"></a>混叠(aliasing)</h3><p>sinc函数的无边界特性只是一个问题.另外一个理想采样和重建过程中的严重问题是其对于信号都是假设有边界的.对于无限边界的信号,如果采样频率不够的话,将会重建出不同于原信号的结果.<br>成功重建信号的关键在于精确覆盖原信号频率域\(F(\omega)\)以一定宽度的箱函数.</p>
 
     </div>
