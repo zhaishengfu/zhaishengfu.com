@@ -156,7 +156,7 @@
 <p>这里值得注意的一点是,shah函数的空间域和频域函数的周期是倒数关系,这意味着如果空间域的样本距离很大,那么频率域的样本距离很小.<br>因而采样信号的频率域表达\(\mathcal{F} (S(x))\)可以由\(F(\omega)\)和上面的shah的频率域函数的卷积得到.而将函数与delta函数进行卷积得到的就是原函数的若干复制,所以shah函数卷积会得到原始函数的无穷多的序列复制,等距分布, 周期和shah的周期一样.这就是样本序列的频率空间的表达!!</p>
 <center> 
 
-<p><img src="/2019/09/04/Sample/Fconv.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.1: 样本频率空间和Shah函数卷积结果</p>
+<p><img src="/2019/09/04/Sample/Fconv.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.2: 样本频率空间和Shah函数卷积结果</p>
 </center>
 
 <p>很显然,想要得到原始信号,应该将除了原点周围的信号全部去除掉.我们可以采用一个箱函数<strong>box function</strong>来进行这个操作. 假定箱函数宽度为\(T\),则箱函数定义是:<br>$$<br>\Pi_T(x)=\begin{cases}<br>1 / 2T, &amp; \text{如果$ \vert{x}\vert &lt;T $} \\<br>0, &amp; \text{其他情况}<br>\end{cases}<br>$$<br>频率域的相乘意味着空间域的卷积,所以这里我们相乘得到重建信号的频率表示:<br>$$\tilde{F} = (F(\omega) \otimes \bigvee_{1/T}(\omega)) \Pi_T(\omega)$$</p>
@@ -167,10 +167,14 @@
 <p>悲剧的是,因为sinc函数具有无限的边界,所以必须使用\(f(i)\)的所有采样值来计算空间域的某个特定值\(\tilde{f}(x)\). 实际使用只会采取一定范围之内.</p>
 <center> 
 
-<p><img src="/2019/09/04/Sample/%E7%90%86%E6%83%B3%E9%87%8D%E5%BB%BA.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.1: 理想重建过程</p>
+<p><img src="/2019/09/04/Sample/Ideal.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.3: 理想重建过程</p>
 </center>
 
-<h3 id="混叠-aliasing"><a href="#混叠-aliasing" class="headerlink" title="混叠(aliasing)"></a>混叠(aliasing)</h3><p>sinc函数的无边界特性只是一个问题.另外一个理想采样和重建过程中的严重问题是其对于信号都是假设有边界的.对于无限边界的信号,如果采样频率不够的话,将会重建出不同于原信号的结果.<br>成功重建信号的关键在于精确覆盖原信号频率域\(F(\omega)\)以一定宽度的箱函数.</p>
+<h3 id="混叠-aliasing"><a href="#混叠-aliasing" class="headerlink" title="混叠(aliasing)"></a>混叠(aliasing)</h3><p>sinc函数的无边界特性只是一个问题.另外一个理想采样和重建过程中的严重问题是其对于信号都是假设有边界的.对于无限边界的信号,如果采样频率不够的话,将会重建出不同于原信号的结果.<br>成功重建信号的关键在于精确覆盖原信号频率域\(F(\omega)\)以一定宽度的箱函数,如图三所示.但是多种情况会导致无法完美重建.第一种情况,原始信号的采样频率过低.我们之前说过空间域和频率域的shah函数的周期是倒数关系,所以空间域样本间距过大会导致频率域样本间距过小,从而使得\(F(\omega)\)的复制样本之间重叠.这种情况下无论如何也不可能完美恢复原信号</p>
+<center> 
+
+<p><img src="/2019/09/04/Sample/Overlapping.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.3: 采样频率过低</p>
+</center>
 
     </div>
 </article>
