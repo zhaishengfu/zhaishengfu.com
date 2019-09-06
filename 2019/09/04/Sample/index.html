@@ -194,7 +194,25 @@
 </center>
 
 <h2 id="延伸阅读-哈尔顿采样-Halton-Sampler"><a href="#延伸阅读-哈尔顿采样-Halton-Sampler" class="headerlink" title="延伸阅读:哈尔顿采样(Halton Sampler)"></a>延伸阅读:哈尔顿采样(<em>Halton Sampler</em>)</h2><p>分层抽样还是有可能出现不同地层之间的采样距离过近的情况.哈尔顿采样是一种低差异采样,其会确保产生的采样点不会距离过近,同时又可以在所有维度均匀分布.</p>
-<h3 id="哈默斯利序列和哈尔顿序列-Hammersley-and-Halton-Sequence"><a href="#哈默斯利序列和哈尔顿序列-Hammersley-and-Halton-Sequence" class="headerlink" title="哈默斯利序列和哈尔顿序列(Hammersley and Halton Sequence)"></a>哈默斯利序列和哈尔顿序列(Hammersley and Halton Sequence)</h3>
+<h3 id="哈默斯利序列和哈尔顿序列-Hammersley-and-Halton-Sequence"><a href="#哈默斯利序列和哈尔顿序列-Hammersley-and-Halton-Sequence" class="headerlink" title="哈默斯利序列和哈尔顿序列(Hammersley and Halton Sequence)"></a>哈默斯利序列和哈尔顿序列(Hammersley and Halton Sequence)</h3><p>这两个序列都都是低差异的,都基于”倒根函数”(<em>radical inverse</em>).</p>
+<h2 id="延伸阅读-0-2-序列采样"><a href="#延伸阅读-0-2-序列采样" class="headerlink" title="延伸阅读:(0,2)序列采样"></a>延伸阅读:(0,2)序列采样</h2><p>这是另一种产生高质量采样的低差异序列采样方法.</p>
+<h2 id="延伸阅读-最大最小距离采样"><a href="#延伸阅读-最大最小距离采样" class="headerlink" title="延伸阅读:最大最小距离采样"></a>延伸阅读:最大最小距离采样</h2><h2 id="延伸阅读-苏泊尔采样-Sobol-Sample"><a href="#延伸阅读-苏泊尔采样-Sobol-Sample" class="headerlink" title="延伸阅读:苏泊尔采样(Sobol Sample)"></a>延伸阅读:苏泊尔采样(<em>Sobol Sample</em>)</h2><h2 id="图像重建"><a href="#图像重建" class="headerlink" title="图像重建"></a>图像重建</h2><p>无论采用什么采样方法,我们现在得到了图像样本,现在需要将样本值转变成最终像素的辐射亮度值.根据信号处理理论,我们需要做三个步骤:</p>
+<ul>
+<li>从采样数据中重建连续信号 \(\tilde{F}\)地方</li>
+<li>对\(\tilde{F}\)进行前置滤波,移除超过奈奎斯特频率的而部分</li>
+<li>对\(\tilde{F}\)进行像素位置的采样,得到最终像素值</li>
+</ul>
+<p>因为我们知道我们队\(\tilde{F}\)在像素位置进行重新采样,所以没必要构建\(\tilde{F}\)的显示表达.可以采用一个滤波函数实现这个过程.<br>再次回顾理想重建的过程:均匀以高于奈奎斯特频率对原信号进行采样,并以sinc滤波器进行重建,那么重建信号将与原信号完美匹配.但是,由于图像函数总是有更高的频率,所以这个过程不太可能实现.因为我们采样非均匀采样,将混叠转变成噪声.<br>尽管人们试了很多方法来试图用非均匀采样完美重建,但是还没有一个可接受的方法实现.现实中完美重建基本不可能实现.因而,显示中的重建在于重建函数和原始函数的误差最小,而不局限于原始信号是否是有界的.<br>重建像素值可以用下面公式来表达:<br>$$I(x,y) = \frac{\sum_i f(x- x_i, y -y_i)\omega(x_i, y_i) L(x_i, y_i)}{\sum_if(x-x_i, y -y_i)}$$<br>其中\(f\)是滤波函数,\(\omega\)是采样分布权重, \(L\)是采样辐射亮度值. sinc滤波器在这里并不是很好的选择:一方面,它会产生吉布斯现象;另一方面,他是无边界的.事实上,滤波器的选择并没有最好一说.每个场景可能都有最适合的滤波器.</p>
+<h3 id="盒子滤波器-和三角滤波器-Box-Filter-And-Triangle-Filter"><a href="#盒子滤波器-和三角滤波器-Box-Filter-And-Triangle-Filter" class="headerlink" title="盒子滤波器 和三角滤波器(Box Filter And Triangle Filter)"></a>盒子滤波器 和三角滤波器(Box Filter And Triangle Filter)</h3><p>最常用的滤波器之一.最简单,也可能是效果最差的.前面我们说过盒子滤波器会允许采样数据的高频信息泄漏到重建值中.这导致了<em>postaliasing</em>:即使原始采样值频率足够高,但是滤波器引入了新的误差.<br>三角滤波器要好一点点,但是本质还是存在上面问题.</p>
+<h3 id="高斯滤波器-Gaussian-Filter"><a href="#高斯滤波器-Gaussian-Filter" class="headerlink" title="高斯滤波器(Gaussian Filter)"></a>高斯滤波器(Gaussian Filter)</h3><p>这可能是实际应用中效果比较好的一种了.高斯分布将造成轻微的模糊.</p>
+<h3 id="米切尔滤波器-Mitchell-Filter"><a href="#米切尔滤波器-Mitchell-Filter" class="headerlink" title="米切尔滤波器(Mitchell Filter)"></a>米切尔滤波器(<em>Mitchell Filter</em>)</h3><p>滤波器的设计是很困难的事情,混合了数学分析和感知试验.Mitchell在1988年进行了一系列试验,并发明了一种在振铃效应和模糊之间平衡的滤波器:米切尔滤波器.米切尔滤波器很像高斯滤波器,但是其具有负数的末端分布.这些负数部分造成了边缘部分的尖锐效果,会减少模糊.其缺点是如果负数部分过大,振铃效应就会出现,并且可能需要阶段来保证没有负数输出.</p>
+<center> 
+
+<p><img src="/2019/09/04/Sample/GaussianandMitchell.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.4: 高斯和米切尔滤波器</p>
+</center>
+
+<h3 id="窗口sinc滤波"><a href="#窗口sinc滤波" class="headerlink" title="窗口sinc滤波"></a>窗口sinc滤波</h3><p>将原始无边界的sinc滤波乘以某个窗口函数变成有边界的,这回降低振铃效应</p>
+
     </div>
 </article>
         </main>
