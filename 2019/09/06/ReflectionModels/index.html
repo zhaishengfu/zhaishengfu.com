@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta name="keywords" content>
+    <title>
+        zhaishengfu
+    </title>
+    <!-- favicon -->
+     <link rel="stylesheet" href="/css/style.css">
+
+    <!-- highlight -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/github-gist.min.css">
+    <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+    <script>
+        hljs.initHighlightingOnLoad()
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/frontendsophie/hexo-infinite-scroll@2.0.0/dist/main.js"></script>
+
+    <script>
+        infiniteScroll()
+
+        window.addEventListener('DOMContentLoaded', function () {
+            const [
+                mainTitle,
+                mobileMenu,
+                mobileMainTitle,
+                mobileMenuBtn,
+                ipadMenuBtn,
+                aside,
+                closeBtn,
+            ] = getEle(
+                '#main-title',
+                '.mobile-menu',
+                '.mobile-menu h3',
+                '.mobile-menu button',
+                '.ipad-menu',
+                'aside',
+                'aside .close',
+            )
+            const io = new IntersectionObserver(entries => {
+                if (entries[0].intersectionRatio <= 0) {
+                    mobileMainTitle.classList.remove('invisibile')
+                } else {
+                    mobileMainTitle.classList.add('invisibile')
+                }
+            })
+            io.observe(mainTitle)
+
+            clickToggleAside(mobileMenuBtn)
+            clickToggleAside(ipadMenuBtn)
+            clickToggleAside(closeBtn, false)
+
+            const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+            if (isMenuVisible) document.body.style.background = 'none'
+
+            function getEle(...args) {
+                return args.map(arg => document.querySelector(arg))
+            }
+
+            function clickToggleAside(btn, show = true) {
+                btn.addEventListener('click', function () {
+                    if (show) {
+                        aside.style.display = 'block'
+                    } else {
+                        aside.style.display = 'none'
+                    }
+                })
+            }
+        })
+    </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
+        <h3 class="invisibile">
+            <a href="/" class="logo">
+                zhaishengfu
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/" class="logo">
+            zhaishengfu
+        </a>
+    </h1>
+    <h2 class="desc">
+        Math / Render / Game
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="https://blog.csdn.net/zhaishengfu">
+                    CSDN
+                </a>
+            </li>
+            
+            <li>
+                <a href="/zhaishengfu@gmail.com">
+                    EMail
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+        <main class="main">
+            <article class="post">
+    
+    
+    <h4 class="post-cat">
+        <a href="/categories/渲染/">
+            渲染
+        </a>
+    </h4>
+    
+    
+    <h2 class="post-title">
+        反射模型(Reflection Models)
+    </h2>
+    <ul class="post-date">
+        <li>
+            2019-09-06
+        </li>
+        <li>
+            翟升富
+        </li>
+    </ul>
+    <div class="post-content">
+        <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<p>Motivation: 光线照射到物体表面会发生一定的作用, 然后散射到空气中或进入物体内部进行光学作用. 这就是光能照亮世界的原因!!</p>
+<p>反射模型用来描述表面光的散射行为. 通常来说这种行为由多种空间混合的BRDF和BRDF混合描述. 表面反射模型可以来源于很多数据:</p>
+<ul>
+<li>测量数据. 这是最精确的, 也是最复杂的, 现实世界的表面反射分布属性在实验中经过充分测量, 然后以表格形式或者基函数集合的形式来使用</li>
+<li>现象学模型: 定性的描述某些表面属性, 例如”粗糙度”, 这种BSDF最容易使用, 因为基于直观理解.</li>
+<li>模拟. 有时我们可以获取表面组合的底层信息. 例如我们知道颜料是由悬浮在某种媒介中的一些彩色颗粒组成, 某种特定的织物由某某些已知反射属性的某些纤维组成; 这种情况下基于微几何的建模可以模拟产生反射数据. 这个模拟可以渲染时完成, 也可以提前处理好, 然后生成一系列基函数来用于渲染.</li>
+<li>物理(波)光学: 某些反射模型从对光的精细建模推导而出, 将光作为波来处理, 计算麦克斯韦方程组的解, 并计算基于已知表面属性的散射行为. 这些模型计算费时, 并且有的时候并不会比基于集合光学的方法更准确</li>
+<li>几何光学: 类似模拟的方法, 如果表面的底层散射和集合信息已知, 有的时候可以直接得到闭合的反射模型的解. 几何光学是的光和表面的交互可追踪.</li>
+</ul>
+<p>我们首先来讲解一下大致的渲染流程:</p>
+<p><strong><em>对于每条射线, 找到场景中和物体相交的最近点, 并且获取相交点的表面着色信息(法向量, 反射率, 粗糙度, BSDF信息等, 这通常包含在材质中). 最后, 利用相交点的表面信息和到达相交点的辐射亮度进行样本积分决定最终的定点着色.</em></strong></p>
+<p>我们首先需要了解一些基本术语. 表面反射可以分为四种类型:</p>
+<ul>
+<li>漫反射 <em>diffuse</em>, 例如黑板, 无光油漆</li>
+<li>光泽镜面 <em>glossy specular</em>, 例如塑料\颜料</li>
+<li>理想镜面 <em>perfect specular</em>, 例如镜子, 玻璃</li>
+<li>复古反射 <em>retro-reflective</em>, 例如月球, 丝绒</li>
+</ul>
+<p>除此之外, 反射具有各项同性和各向异性:</p>
+<ul>
+<li>各项同性 <em>isotropic</em>, 大多数物体</li>
+<li>各向异性, <em>anisotropic</em>, 例如粉刷金属, 光盘, 多种类型衣服</li>
+</ul>
+<h3 id="几何设定"><a href="#几何设定" class="headerlink" title="几何设定"></a>几何设定</h3><p>反射计算通常在反射坐标系中进行, 该坐标系包含两个相切的向量和相交点的法向量.</p>
+<center> 
+
+<p><img src="/2019/09/06/ReflectionModels/basis.png" alt="&quot;采样重建&quot;" title="Optional title"></p>
+<p>Fig.1: 反射坐标系</p>
+</center>
+
+<p>着色坐标系统也可以表达为球面座标\((\theta, \phi)\)</p>
+<center> 
+
+<p><img src="/2019/09/06/ReflectionModels/circular.png" alt="&quot;采样重建&quot;" title="Optional title"></p>
+<p>Fig.1: 反射坐标系</p>
+</center>
+
+<h2 id="镜面反射和透射-Specular-Reflection-And-Transmission"><a href="#镜面反射和透射-Specular-Reflection-And-Transmission" class="headerlink" title="镜面反射和透射 (Specular Reflection And Transmission)"></a>镜面反射和透射 (Specular Reflection And Transmission)</h2><p>理想光滑表面的光学行为用物理和几何光学都比较容易建模. 对于给定\(\omega_i\)方向, 所有的光线都在一个方向\(\omega_o\)进行散射. 在球面坐标系中, 反射方向是:<br>$$\begin{cases}<br>\theta_i = \theta_o \\<br>\phi_o = \phi_i + \pi<br>\end{cases}$$</p>
+<p>对于投射：<br>$$\begin{cases}<br>\theta_t = Snell(\theta_o) \\<br>\phi_o = \phi_i + \pi<br>\end{cases}$$</p>
+<p>透射中的Snell定律基于相交表面两边介质的折射率.折射率描述的是光在某种介质中的传播速度和真空中传播速度的比值.我们用\(\eta\)表示折射率,则Snell定律为:<br>$$ \eta_i   sin \theta_i = \eta_t  sin \theta_t$$</p>
+<p>通常,折射率随着光的波长而改变,也就是说,入射光在两种不同介质中间通常会散射到不同的方向.这就是色散效应.不过一般来说会忽略这种效应.</p>
+<h3 id="菲涅尔反射率-Fresnel-Reflectance"><a href="#菲涅尔反射率-Fresnel-Reflectance" class="headerlink" title="菲涅尔反射率(Fresnel Reflectance)"></a>菲涅尔反射率(Fresnel Reflectance)</h3><p>除了反射和透射的方向,我们还需要计算入射光反射和透射的比例.对于精确的物理建模,反射和透射的比例依赖于方向.菲涅尔方程组描述了从表面反射的光的数量.他们是麦克斯韦方程组在光滑表面的解.<br>菲涅尔方程组输入折射率和入射光的角度, 输出入射光两种不同偏振状态的反射率.不过通常认为光是无偏的.这种假设下,菲涅尔反射率就是平行偏振和垂直偏振的平方平均值.<br>物体表面属性可以用材质表达,材质可以分为以下三种;</p>
+<ul>
+<li>绝缘体, 他们的折射率是实数.例如玻璃,水,空气</li>
+<li>导体, 他们的折射率是复数形式,</li>
+<li>半导体</li>
+</ul>
+<p>导体和绝缘体都可以用相同的菲涅尔方程组求解.但是由于绝缘体的折射率是实数的,所以形式上更加简单.</p>
+<h3 id="镜面反射公式"><a href="#镜面反射公式" class="headerlink" title="镜面反射公式"></a>镜面反射公式</h3><p>现在推导镜面反射公式. 由于镜面反射只在一个方向有值,所以其他方向的积分都不存在<br>$$L_o(\omega_o) = \int f_r(\omega_o, \omega_i) L_i(\omega_i) |cos \theta_i| d\omega_i \\<br>= F_r(\omega_r)L_i(\omega_r)$$<br>其中\(\omega_r = R(\omega_o, \vec{n})\)表示反射方向, \(F_r(w)\)表示反射光的比例.注意到这里\(\cos\theta_i\)消失了,为什么呢?因为其本身就是输入光的角度引起的损耗,而\(F_r\)中已经包含了角度的损耗.<br>我们的目的是知道\(f_r\).上式的BRDF可以使用狄拉克分布来构造.回顾之前提到的狄拉克函数的一个属性:<br>$$ \int f(x) \delta(x-x_0)dx = f(x_0)$$<br>很容易就可以通过\(\delta\)函数求得正确的BSDF:<br>$$f_r(\omega_o,\omega_i) = \delta(\omega_i - \omega_r)  \frac{F_r(\omega_i)}{cos\theta_r}$$</p>
+<h3 id="镜面透射公式"><a href="#镜面透射公式" class="headerlink" title="镜面透射公式"></a>镜面透射公式</h3><p>假设\(\eta_i\)和\(\eta_o\)是输入光和输出光的媒介折射率.用\(\tau\)表示入射能量的透射比例,则根据菲涅尔等式可知道\(\tau = 1 - F_r(\omega_i)\)<br>最终我们得到:<br>$$L_o = \tau L_i \frac{\eta_o^2}{\eta_i^2}$$<br>类似镜面反射,我们可以得到镜面透射的BTDF:<br>$$f_r(\omega_o, \omega_i) = \frac{\eta_o^2}{\eta_i^2} (1 - F_r(\omega_i)) \frac{\delta(\omega_i - T(\omega_o, \vec{n}))}{|cos\theta_i|}$$</p>
+<h2 id="朗伯反射-Lambertian-Reflection"><a href="#朗伯反射-Lambertian-Reflection" class="headerlink" title="朗伯反射 Lambertian Reflection"></a>朗伯反射 Lambertian Reflection</h2><p>最简单的BRDF之一就是朗伯反射,他模拟完美漫反射表面,将入射光线均匀在所有方向散射.现实生活中这种表面几乎不存在,但是对于很多表面例如无光油漆,他是非常好的近似.<br>朗伯反射非常简单,其只有一个参数\(R\),即表面反射率, 对应BRDf是\(R / \pi\)</p>
+<h2 id="微表面模型"><a href="#微表面模型" class="headerlink" title="微表面模型"></a>微表面模型</h2><p>许多粗糙表面的几何光学建模都是基于微表面模型.其对微表面的朝向进行统计学描述.</p>
+<center> 
+
+<p><img src="/2019/09/06/ReflectionModels/microfacet.png" alt="&quot;采样重建&quot;" title="Optional title"></p>
+<p>Fig.2: 微表面模型</p>
+</center>
+
+<p>微表面模型的两个主要部分是微表面的分布和用来描述微表面的光散射行为的BRDF.一般用镜面反射来描述微表面BRDF,但是诸如Oren-Nayar模型也会采样诸如朗伯反射来描述微表面.<br>计算微表面模型时,必须考虑到微表面的局部光照效果.具体包括三个:</p>
+<ul>
+<li>遮罩, <em>masking</em></li>
+<li>阴影, <em>shadow</em></li>
+<li>内交互 <em>interreflection</em></li>
+</ul>
+<h3 id="奥伦纳亚尔漫反射-Oren-Nayar-Diffuse-Reflection"><a href="#奥伦纳亚尔漫反射-Oren-Nayar-Diffuse-Reflection" class="headerlink" title="奥伦纳亚尔漫反射 Oren-Nayar Diffuse Reflection"></a>奥伦纳亚尔漫反射 Oren-Nayar Diffuse Reflection</h3>
+    </div>
+</article>
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+    <h1>Categories</h1>
+
+    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/渲染/">渲染</a></li></ul>
+
+            </section>
+            <section class="aside-section">
+                
+    <h1>Archives</h1>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h1>Tags</h1>
+
+    <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BSDF/">BSDF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pbrt/">pbrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/伪代码/">伪代码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/采样/">采样</a></li></ul>
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>
