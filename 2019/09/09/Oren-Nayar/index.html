@@ -114,110 +114,52 @@
     </div>
 </header>
         <main class="main">
-            
-<section class="posts">
+            <article class="post">
     
-        <article class="post">
-            
-                <h4 class="post-cat">
-                    <a href="/categories/渲染/">
-                        渲染
-                    </a>
-                </h4>
-                
-                    <h1 class="post-title">
-                        <a href="/2019/09/09/Oren-Nayar/">
-                            Oren-Nayar
-                        </a>
-                    </h1>
+    
+    <h4 class="post-cat">
+        <a href="/categories/渲染/">
+            渲染
+        </a>
+    </h4>
+    
+    
+    <h2 class="post-title">
+        Oren-Nayar
+    </h2>
+    <ul class="post-date">
+        <li>
+            2019-09-09
+        </li>
+        <li>
+            翟升富
+        </li>
+    </ul>
+    <div class="post-content">
+        <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<p><em>本片文章原论文:Generalization of Lambert’s Reflectance Model,<br>作者:Michael Oren and Shree K. Nayar</em> </p>
+<p>Motivation:朗伯模型在反射中广泛使用,但是对于许多现实世界的物体,朗伯模型是非常糟糕的虎必须.首先,朗伯模型的亮度和视角方向是无关的,但是实际粗糙表面的亮度随着观察方向和光源方向接近而增加.这导致的一个现象就是,粗糙表面的边缘部分不会变得很暗,而是和其他地方差不多一样明亮,显得表面比较平整.这些现象表明,朗伯模型缺乏一个重要的描述表面特性的属性:粗糙度.</p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><center> 
 
-                    <ul class="post-date">
-                        <li>
-                            September 9, 2019
-                        </li>
-                        <li>
-                            翟升富
-                        </li>
-                    </ul>
-                    
-                        <div class="post-cover">
-                            <img src="/2019/09/09/Oren-Nayar/vase.png">
-                        </div>
-                    
-                    <div class="post-content ">
-                        
-                            <a href="/2019/09/09/Oren-Nayar/" class="more-link">Continue reading</a>
-                    </div>
-        </article>
-        
-        <article class="post">
-            
-                <h4 class="post-cat">
-                    <a href="/categories/渲染/">
-                        渲染
-                    </a>
-                </h4>
-                
-                    <h1 class="post-title">
-                        <a href="/2019/09/06/ReflectionModels/">
-                            反射模型(Reflection Models)
-                        </a>
-                    </h1>
+<p><img src="/2019/09/09/Oren-Nayar/vase.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.1: 一个粗糙的花瓶的真实图片和朗伯模型渲染对比.在边缘地方,朗伯模型趋近于黑暗,但现实比较明亮</p>
+</center>
+如上所示,朗伯模型不能很好模拟这种情况的原因,作者分析认为是粗糙度的原因.当放大物体表面的时候,可以发现表面是由更多的细小表面组成的,多个微表面的光聚合到了一个像素点上.这种效果随着表面粗糙度增加和入射光角度增加而愈发明显.
+<center> 
 
-                    <ul class="post-date">
-                        <li>
-                            September 6, 2019
-                        </li>
-                        <li>
-                            翟升富
-                        </li>
-                    </ul>
-                    
-                        <div class="post-cover">
-                            <img src="/2019/09/06/ReflectionModels/basis.png">
-                        </div>
-                    
-                    <div class="post-content ">
-                        
-                            <a href="/2019/09/06/ReflectionModels/" class="more-link">Continue reading</a>
-                    </div>
-        </article>
-        
-        <article class="post">
-            
-                <h4 class="post-cat">
-                    <a href="/categories/渲染/">
-                        渲染
-                    </a>
-                </h4>
-                
-                    <h1 class="post-title">
-                        <a href="/2019/09/04/Sample/">
-                            采样和重建(Sample And Reconstruction)
-                        </a>
-                    </h1>
+<p><img src="/2019/09/09/Oren-Nayar/oren-nayar.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.2: 微表面,当一个表面渲染到一个像素的时候,朗伯模型没问题;但是当多个表面渲染到一个像素时,朗伯模型没有办法描述这种行为.</p>
+</center>
 
-                    <ul class="post-date">
-                        <li>
-                            September 4, 2019
-                        </li>
-                        <li>
-                            翟升富
-                        </li>
-                    </ul>
-                    
-                        <div class="post-cover">
-                            <img src="/2019/09/04/Sample/sampleandreconstruction.png">
-                        </div>
-                    
-                    <div class="post-content ">
-                        
-                            <a href="/2019/09/04/Sample/" class="more-link">Continue reading</a>
-                    </div>
-        </article>
-        
-</section>
+<p>粗糙表面的研究由来已久.1941年,<em>Minnaert</em>获取了下面的反射函数:<br>$$f_r = \frac{k+1}{2\pi}(cos\theta_i\ cos\theta_r)^{(k-1)} \ ,\  0 \le k \le 1$$<br>其中\(\theta_i, \theta_r\)分别是入射光和反射光的极角.k是表面粗糙度的衡量,这个公式遵循赫姆霍兹互易原理(Helmholtz’s reciprocity principle),但是没有任何理论基础,这是基于测量数据的经验模型.它假定辐射亮度关于表面法向量对称.本文认为这个假设是错误的.<br>除了经验模型,很多人开始建立理论模型.这些理论模型主要受月球的反射特性启发.来自月球的可见光和红外发射数据被大量监测, 这些监测数据表明月球表面在光源方向比其他方向会反射回来更多的光,这种现象叫做反向散射(backscattering).<br>本文的反射模型基于V型槽.每个V型槽的表面假定比入射光的波长大很多.V型槽的每个面假定是朗伯模型.我们进行辐射度学的定义.这一部分可以参见我的博客<a href="https://blog.csdn.net/zhaishengfu/article/details/94603699" target="_blank" rel="noopener">辐射度学</a>. \(\hat{s}\)是入射光 , \(\hat{v}\)是视角方向 , \(dA\)表示被照亮的表面区域.</p>
+<center> 
 
+<p><img src="/2019/09/09/Oren-Nayar/ratiometric.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.2: 辐射度学几何描述</p>
+</center>
+
+<p>\(dA\)反射的光能量正比于入射光的能量.入射光的辐射照度表示单位面积的光通量:<br>$$E(\theta_i, \phi_i) = \frac{d\Phi(\theta_i, \phi_i)}{dA}$$<br>视角方向感知的亮度正比于视角方向的辐射亮度.表面辐射亮度是:<br>$$L_r(\theta_r,\phi_r;\theta_i, \phi_i) = \frac{d^2\Phi_r(\theta_r,\phi_r;\theta_i, \phi_i)}{dA \ cos\theta_r\ d\omega_r}$$<br>上面表示表面单位立体角,单位面积发射的光通量. BRDF的定义是:<br>$$f_r(\theta_r,\phi_r;\theta_i, \phi_i) = \frac{dL_r(\theta_r,\phi_r;\theta_i, \phi_i)}{dE(\theta_i, \phi_i) }$$</p>
+<p>本文采用了Torrance And Sparrow(以下简称TAS)模型来对粗糙模型建模. 这种模型是V型槽,并且边的上部分在同一平面.表面的粗糙度使用微表面的坡度的概率分布描述</p>
+
+    </div>
+</article>
         </main>
         <aside class="aside">
             <div class="close"></div>

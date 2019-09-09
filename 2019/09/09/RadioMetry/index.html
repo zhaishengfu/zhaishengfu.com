@@ -114,110 +114,54 @@
     </div>
 </header>
         <main class="main">
-            
-<section class="posts">
+            <article class="post">
     
-        <article class="post">
-            
-                <h4 class="post-cat">
-                    <a href="/categories/渲染/">
-                        渲染
-                    </a>
-                </h4>
-                
-                    <h1 class="post-title">
-                        <a href="/2019/09/09/Oren-Nayar/">
-                            Oren-Nayar
-                        </a>
-                    </h1>
+    
+    <h4 class="post-cat">
+        <a href="/categories/渲染/">
+            渲染
+        </a>
+    </h4>
+    
+    
+    <h2 class="post-title">
+        辐射度学(Radiometry)
+    </h2>
+    <ul class="post-date">
+        <li>
+            2019-09-09
+        </li>
+        <li>
+            翟升富
+        </li>
+    </ul>
+    <div class="post-content">
+        <p><em>更多前置知识访问<a href="https://blog.csdn.net/zhaishengfu/article/details/94603699" target="_blank" rel="noopener">博客</a></em><br>Motivation:图像亮度(Brightness)究竟是什么物理意义?光是电磁波,其电磁辐射和图像亮度又有什么关系?所有这些,都可以用辐射度学(Radiometry)来精确而严格的描述.</p>
+<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><ul>
+<li>图像: 二维数组,数组的每个值都是亮度值</li>
+<li>几何:物体的点将投影到图像中的哪一个点</li>
+<li>辐射度学: 图像上点的亮度是什么</li>
+<li>图像亮度:图像平面上的辐射通量,也就是辐射照度(irradiance)</li>
+<li>场景亮度:某个表面发射的辐射通量,也就是辐射亮度(radiance)</li>
+</ul>
+<p>下面我们详细说明.</p>
+<h3 id="光"><a href="#光" class="headerlink" title="光"></a>光</h3><ul>
+<li>电磁能</li>
+<li>波粒二象性,但是渲染中一般考虑波特性</li>
+<li>光源通常在一定的光谱频率范围内发射能量</li>
+</ul>
+<h3 id="辐射照度"><a href="#辐射照度" class="headerlink" title="辐射照度"></a>辐射照度</h3><ul>
+<li>来自所有方向的光照射某个区域</li>
+<li>辐射照度是单位面积的能量</li>
+</ul>
+<center> 
 
-                    <ul class="post-date">
-                        <li>
-                            September 9, 2019
-                        </li>
-                        <li>
-                            翟升富
-                        </li>
-                    </ul>
-                    
-                        <div class="post-cover">
-                            <img src="/2019/09/09/Oren-Nayar/vase.png">
-                        </div>
-                    
-                    <div class="post-content ">
-                        
-                            <a href="/2019/09/09/Oren-Nayar/" class="more-link">Continue reading</a>
-                    </div>
-        </article>
-        
-        <article class="post">
-            
-                <h4 class="post-cat">
-                    <a href="/categories/渲染/">
-                        渲染
-                    </a>
-                </h4>
-                
-                    <h1 class="post-title">
-                        <a href="/2019/09/06/ReflectionModels/">
-                            反射模型(Reflection Models)
-                        </a>
-                    </h1>
+<p><img src="/2019/09/09/RadioMetry/irradiance.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.1: 所有方向的光照到某个区域.辐射照度是单位面积的辐射能量</p>
+</center>
 
-                    <ul class="post-date">
-                        <li>
-                            September 6, 2019
-                        </li>
-                        <li>
-                            翟升富
-                        </li>
-                    </ul>
-                    
-                        <div class="post-cover">
-                            <img src="/2019/09/06/ReflectionModels/basis.png">
-                        </div>
-                    
-                    <div class="post-content ">
-                        
-                            <a href="/2019/09/06/ReflectionModels/" class="more-link">Continue reading</a>
-                    </div>
-        </article>
-        
-        <article class="post">
-            
-                <h4 class="post-cat">
-                    <a href="/categories/渲染/">
-                        渲染
-                    </a>
-                </h4>
-                
-                    <h1 class="post-title">
-                        <a href="/2019/09/04/Sample/">
-                            采样和重建(Sample And Reconstruction)
-                        </a>
-                    </h1>
 
-                    <ul class="post-date">
-                        <li>
-                            September 4, 2019
-                        </li>
-                        <li>
-                            翟升富
-                        </li>
-                    </ul>
-                    
-                        <div class="post-cover">
-                            <img src="/2019/09/04/Sample/sampleandreconstruction.png">
-                        </div>
-                    
-                    <div class="post-content ">
-                        
-                            <a href="/2019/09/04/Sample/" class="more-link">Continue reading</a>
-                    </div>
-        </article>
-        
-</section>
-
+    </div>
+</article>
         </main>
         <aside class="aside">
             <div class="close"></div>

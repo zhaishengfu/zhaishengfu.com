@@ -195,14 +195,47 @@
 <p><img src="/2019/09/06/ReflectionModels/microfacet.png" alt="&quot;采样重建&quot;" title="Optional title"></p>
 <p>Fig.2: 微表面模型</p>
 </center>
+由于视网膜的光感受器和相机中的像素都是有限面积探测器,因此通常将大量的宏观(远大于入射光波长)表面粗糙度投射到单个探测元素上,从而生成基于多个微表面的聚合亮度.
+<center> 
 
-<p>微表面模型的两个主要部分是微表面的分布和用来描述微表面的光散射行为的BRDF.一般用镜面反射来描述微表面BRDF,但是诸如Oren-Nayar模型也会采样诸如朗伯反射来描述微表面.<br>计算微表面模型时,必须考虑到微表面的局部光照效果.具体包括三个:</p>
+<p><img src="/2019/09/06/ReflectionModels/aggre-micro.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.3: 微表面聚合亮度</p>
+</center>
+事实上微表面的漫反射是基于月球的观察的得到的.当满月的时候,首先月亮整体是漫反射的,但是月亮的边缘也是很明亮的,而不是朗伯模型计算的那样接近于0.
+<center> 
+
+<p><img src="/2019/09/06/ReflectionModels/moon.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.4: 满月.注意边缘并不是接近于黑色,而是也比较明亮</p>
+</center>
+这说明朗伯模型并不适用于描述月球这类物体的反射.究其原因在于朗伯模型没有粗糙度的概念,对于光滑的漫反射表面模拟比较好,但是对于粗糙漫反射模拟就很差.而粗糙度会造成边缘的亮度增加,使得整体外观更加光滑,
+<center> 
+
+<p><img src="/2019/09/06/ReflectionModels/flat.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.6: 粗糙度会影响漫反射的边缘亮度,使得整体更加平整</p>
+</center>
+事实上朗伯模型对于所有基于粗糙度的光学现象朗伯模型都没有办法模拟,例如粗糙物体的高光模糊
+<center> 
+
+<p><img src="/2019/09/06/ReflectionModels/highlight.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.6: 粗糙度会影响高光模糊</p>
+</center>
+
+
+<p>基于此,提出了可以描述表面粗糙度的微表面模型.微表面模型的两个主要部分是微表面的分布和用来描述微表面的光散射行为的BRDF.一般用镜面反射来描述微表面BRDF,但是诸如Oren-Nayar模型也会采样诸如朗伯反射来描述微表面.<br>计算微表面模型时,必须考虑到微表面的局部光照效果.具体包括三个:</p>
 <ul>
 <li>遮罩, <em>masking</em></li>
 <li>阴影, <em>shadow</em></li>
 <li>内交互 <em>interreflection</em></li>
 </ul>
-<h3 id="奥伦纳亚尔漫反射-Oren-Nayar-Diffuse-Reflection"><a href="#奥伦纳亚尔漫反射-Oren-Nayar-Diffuse-Reflection" class="headerlink" title="奥伦纳亚尔漫反射 Oren-Nayar Diffuse Reflection"></a>奥伦纳亚尔漫反射 Oren-Nayar Diffuse Reflection</h3>
+<h3 id="奥伦纳亚尔漫反射-Oren-Nayar-Diffuse-Reflection"><a href="#奥伦纳亚尔漫反射-Oren-Nayar-Diffuse-Reflection" class="headerlink" title="奥伦纳亚尔漫反射 Oren-Nayar Diffuse Reflection"></a>奥伦纳亚尔漫反射 Oren-Nayar Diffuse Reflection</h3><p>这是Oren 和Nayar在1994年发明的基于球面高斯分布的V-形微表面的粗糙表面反射模型.该高斯分布有一个单独的参数\(\sigma\)描述, \(\sigma\)表示微表面的朝向角度的标准差. 他们发现现实世界的物体不会展现完美的朗伯反射.具体来说,粗糙表面在光照方向和观察方向接近的时光会更加明亮.从地球上看月亮,光照方向和观察方向基本一致,所以边缘部分会更加明亮.<br>这种模型并没有闭合性解, 所以他们找到了一个很好的近似:<br>$$f_r(\omega_i,\omega_o) = \frac{R}{\pi}(A+ B max(0, cos(\phi_i-\phi_o)) sin\alpha tan\beta)$$<br>该模型具有以下特点:</p>
+<ul>
+<li>基于物理建模的漫反射</li>
+<li>基于几何光学</li>
+<li>解释了粗糙表面的视角依赖的亮度外观变化</li>
+<li>考虑到了部分内交互</li>
+<li>粗糙度用Torrance-Sparrow模型建模</li>
+<li>朗伯模型实际上只是该模型当粗糙度为0的时候的一个特例.</li>
+</ul>
+<p>关于该模型的详细推导,请参见[Oren-Nayra]详细推导文章</p>
+<h3 id="微表面分布函数"><a href="#微表面分布函数" class="headerlink" title="微表面分布函数"></a>微表面分布函数</h3><p>基于镜面反射和透射的微表面反射模型在模拟许多光泽材质例如金属,塑料,毛玻璃等的光散射行为非常有效.首先介绍他的几何属性.回顾上图1, 微表面模型的一个重要特点就是表面法向量的分布 \(D(\omega_h)\).理想的光滑表面的微表面模型可以用<em>delta</em>分布 \(D(\omega_h) = \delta(\omega_h - (0, 0, 1)) \) 来描述.<br>微表面分布函数必须正则化来确保物理真实,也就是说给定微表面的微分区域,微表面的投影面积必须等于微表面的微分区域面积.<br>一种广泛使用的微表面分布函数是Beckmann 和 Spizzichino在1963年提出来的基于高斯分布的微表面模型.<br>$$D(\omega_h) = \frac{e^{-tan^2\theta_h / \alpha^2}}{\pi \alpha^2 cos^4 \theta_h}$$<br>另外一个有效的微表面分布函数是Trowbridge 和Reitz在1975年提出来的模型.他们都可以用来描述各向异性的粗糙表面.Trow模型具有更高的拖尾区域,意味着对于远离表面法向量的方向会更加缓慢的趋向0, 这个特性和许多现实世界的表面匹配的很好.</p>
+<h3 id="遮罩和阴影-Masking-And-Shadowing"><a href="#遮罩和阴影-Masking-And-Shadowing" class="headerlink" title="遮罩和阴影 Masking And Shadowing"></a>遮罩和阴影 Masking And Shadowing</h3><p>微表面法向量的分布不足以描述微表面模型的全部特性.一个重要的需要考虑的情况是:一些微表面从某个视角观察的时候不可见, 因为他们被其他微表面遮挡了,这既可能是表面挡住了反射光(Masking),也有可能是表面挡住了光源直射光(Shadowing).这些效果由<em>Smith’s遮罩-阴影函数</em> \(G_1(\omega,\omega_h)\) 来描述,它描述了法向量是\(\omega_h\)的微表面在方向\(omega\)可见的比例.</p>
+<h2 id="菲涅尔入射效应-Fresnel-Incidence-Effects"><a href="#菲涅尔入射效应-Fresnel-Incidence-Effects" class="headerlink" title="菲涅尔入射效应(Fresnel Incidence Effects)"></a>菲涅尔入射效应(Fresnel Incidence Effects)</h2>
     </div>
 </article>
         </main>
@@ -227,7 +260,7 @@
                 
     <h1>Tags</h1>
 
-    <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BSDF/">BSDF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pbrt/">pbrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/伪代码/">伪代码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/采样/">采样</a></li></ul>
+    <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BSDF/">BSDF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Radiometry/">Radiometry</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pbrt/">pbrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/伪代码/">伪代码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/采样/">采样</a></li></ul>
 
             </section>
         </aside>
