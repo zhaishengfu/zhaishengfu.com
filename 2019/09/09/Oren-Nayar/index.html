@@ -152,12 +152,33 @@
 <p>粗糙表面的研究由来已久.1941年,<em>Minnaert</em>获取了下面的反射函数:<br>$$f_r = \frac{k+1}{2\pi}(cos\theta_i\ cos\theta_r)^{(k-1)} \ ,\  0 \le k \le 1$$<br>其中\(\theta_i, \theta_r\)分别是入射光和反射光的极角.k是表面粗糙度的衡量,这个公式遵循赫姆霍兹互易原理(Helmholtz’s reciprocity principle),但是没有任何理论基础,这是基于测量数据的经验模型.它假定辐射亮度关于表面法向量对称.本文认为这个假设是错误的.<br>除了经验模型,很多人开始建立理论模型.这些理论模型主要受月球的反射特性启发.来自月球的可见光和红外发射数据被大量监测, 这些监测数据表明月球表面在光源方向比其他方向会反射回来更多的光,这种现象叫做反向散射(backscattering).<br>本文的反射模型基于V型槽.每个V型槽的表面假定比入射光的波长大很多.V型槽的每个面假定是朗伯模型.我们进行辐射度学的定义.这一部分可以参见我的博客<a href="https://blog.csdn.net/zhaishengfu/article/details/94603699" target="_blank" rel="noopener">辐射度学</a>. \(\hat{s}\)是入射光 , \(\hat{v}\)是视角方向 , \(dA\)表示被照亮的表面区域.</p>
 <center> 
 
-<p><img src="/2019/09/09/Oren-Nayar/ratiometric.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.2: 辐射度学几何描述</p>
+<p><img src="/2019/09/09/Oren-Nayar/ratiometric.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.3: 辐射度学几何描述</p>
 </center>
 
-<p>\(dA\)反射的光能量正比于入射光的能量.入射光的辐射照度表示单位面积的光通量:<br>$$E(\theta_i, \phi_i) = \frac{d\Phi(\theta_i, \phi_i)}{dA}$$<br>视角方向感知的亮度正比于视角方向的辐射亮度.表面辐射亮度是:<br>$$L_r(\theta_r,\phi_r;\theta_i, \phi_i) = \frac{d^2\Phi_r(\theta_r,\phi_r;\theta_i, \phi_i)}{dA \ cos\theta_r\ d\omega_r}$$<br>上面表示表面单位立体角,单位面积发射的光通量. BRDF的定义是:<br>$$f_r(\theta_r,\phi_r;\theta_i, \phi_i) = \frac{dL_r(\theta_r,\phi_r;\theta_i, \phi_i)}{dE(\theta_i, \phi_i) }$$</p>
-<p>本文采用了Torrance And Sparrow(以下简称TAS)模型来对粗糙模型建模. 这种模型是V型槽,并且边的上部分在同一平面.表面的粗糙度使用微表面的坡度的概率分布描述</p>
+<p>\(dA\)反射的光能量正比于入射光的能量.入射光的辐射照度表示单位面积的光通量:<br>$$E(\theta_i, \phi_i) = \frac{d\Phi(\theta_i, \phi_i)}{dA}$$<br>视角方向感知的亮度正比于视角方向的辐射亮度.表面辐射亮度是:<br>$$L_r(\theta_r,\phi_r;\theta_i, \phi_i) = \frac{d^2\Phi_r(\theta_r,\phi_r;\theta_i, \phi_i)}{dA \ cos\theta_r\ d\omega_r}$$<br>上面表示表面单位立体角,单位投影面积发射的光通量. BRDF的定义是:<br>$$f_r(\theta_r,\phi_r;\theta_i, \phi_i) = \frac{dL_r(\theta_r,\phi_r;\theta_i, \phi_i)}{dE(\theta_i, \phi_i) }$$</p>
+<p>本文采用了Torrance And Sparrow(以下简称TAS)模型来对粗糙模型建模. 这种模型是V型槽,并且边的上部分在同一平面.表面的粗糙度使用微表面的坡度的概率分布描述.V型槽的每个微表面的坡度和朝向表示为\((\theta_a, \phi_a)\). TAS假定所有的微表面具有一样的微分面积\(da\),使用分布\(N(\theta_a,\phi_a)\)来表示单位表面区域内法向量为\((\theta_a,\phi_a)\)的微表面的数量.本文提出”坡度-面积”分布\(P(\theta_a, \phi_a)\)来描述给定法向量的微表面的区域占总表面区域的比例.微表面的数量分布N和坡度面积分布P的关系是:<br>$$P(\theta_a,\phi_a)= N(\theta_a,\phi_a) da \ cos\theta_a$$<br>对于各项同性表面,\(P(\theta_a, \phi_a) = p(\theta_a)\)</p>
+<h3 id="反射率模型"><a href="#反射率模型" class="headerlink" title="反射率模型"></a>反射率模型</h3><p>将采用三种不同的坡度-面积分布函数.</p>
+<ul>
+<li>单向单坡度分布 <em>Uni-directional Single-slope Distribution</em>, 这回生成一个不是各向同性的表面,因为所有的微表面都有相同的坡度,所有V型槽都是相同的方向</li>
+<li>各向同性单坡度分布 <em>Isotropic Single-Slope Distribution</em>, 所有的微表面有相同的坡度,但是朝向在各个方向均匀分布</li>
+<li>高斯分布 <em>Gaussina Distribution</em> ，最通用的情况,坡度-面积分布假定是均值为0的正态分布,表面粗糙度由正态分布的标准差决定.</li>
+</ul>
+<p>在真正讲解三种模型之前,首先来看一下为什么包括月球在内的一些漫反射现象会在观察方向和光源方向接近的时候更亮.用微表面模型可以非常合理的解释这个现象.</p>
+<center> 
 
+<p><img src="/2019/09/09/Oren-Nayar/brighter.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.4: 漫反射的亮度随观察角度变化的基于微表面模型的原理阐释</p>
+</center>
+如上图,当视角方向位于不同方向时,V型槽的两个微表面的投影面积不一样,而不同投影面积的亮度是不一样的,他们的整体效果导致最终的亮度随着观察角度不同而不同.
+
+<h4 id="投影辐射亮度"><a href="#投影辐射亮度" class="headerlink" title="投影辐射亮度"></a>投影辐射亮度</h4><p>在图2右边所示的微表面模型中,某个微表面\(da\)的投影面积是\(dacos\theta_a\), 所以微表面的投影辐射亮度是:<br>$$L_{rp}(\theta_a,\phi_a) = \frac{d^2\Phi_r(\theta_a, \phi_a)}{(dacos\theta_a)cos\theta_rd\omega_r}$$<br>整个表面的辐射亮度可以认为是所有微表面的平均.微表面分布是P, 可以求得所有表面的辐射亮度:<br>$$L_r(\theta_r,\phi_r;\theta_i,\phi_i) = \int_{\theta_a=0}^{\pi/2} \int_{\phi_a=0}^{2\pi}P(\theta_a,\phi_a)L_{rp}(\theta_a,\phi_a)sin\theta_ad\phi_ad\theta_a$$</p>
+<h4 id="单向单坡度分布"><a href="#单向单坡度分布" class="headerlink" title="单向单坡度分布"></a>单向单坡度分布</h4><p>所有微表面具有相同的\(\theta_a\), 所有朝向都相同为\(\phi_a\)或者\(\phi_a + \pi\). 考虑无遮罩和阴影的影响,假定微表面被完全照明.微表面的辐射亮度正比于辐射照度<br>$$R = \frac{\rho}{\pi} E(\theta_a,\phi_a)$$<br>而微表面的辐射照度是<br>$$E(\theta_a,\phi_a) = E_0 &lt;\hat{s},\hat{a}&gt;$$<br>可以得到微表面沿着视角方向反射的辐射通量<br>$$d^2\Phi = \frac{\rho}{\pi}E_0 &lt;\hat{s},\hat{a}&gt; &lt;\hat{v},\hat{a}&gt; da d\omega_r$$<br>进一步可以得到投影辐射亮度<br>$$ \frac{\rho}{\pi}E_0 \frac{&lt;\hat{s},\hat{a}&gt; &lt;\hat{v},\hat{a}&gt;}{&lt;\hat{a},\hat{n}&gt; &lt;\hat{v},\hat{n}&gt;}$$<br>上面式子可以非常清楚地看到,投影辐射亮度随着视角方向的不同而变化.</p>
+<h4 id="几何衰减因子GAF"><a href="#几何衰减因子GAF" class="headerlink" title="几何衰减因子GAF"></a>几何衰减因子GAF</h4><p>如果表面的照明方向和观察方向都是法向量(\(\hat{s} = \hat{v} = \hat{n}\)),所有的微表面都是完全照明和可见的.然而现实中经常会有大角度的入社和反射,因为微表面会被临近表面遮罩或者产生阴影.这两种行为都会影响微表面的投影辐射亮度,所以必须考虑.可以用GAF来描述这种行为.其范围是0~1,表示可见以及被照明的微表面面积占总的微表面面积的比例.</p>
+<center> 
+
+<p><img src="/2019/09/09/Oren-Nayar/shadowandmask.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.5: 阴影和遮罩</p>
+</center>
+GAF的具体推导可以参考相关资料.其最终结果可以表示为:
+$$GAF = min[1,max[0, \frac{2<\hat{s},\hat{n}> <\hat{a},\hat{n}>}{<\hat{s},\hat{a}>}, \frac{2<\hat{v},\hat{n}> <\hat{a},\hat{n}>}{<\hat{v},\hat{a}>}]]$$</\hat{v},\hat{a}></\hat{a},\hat{n}></\hat{v},\hat{n}></\hat{s},\hat{a}></\hat{a},\hat{n}></\hat{s},\hat{n}>
     </div>
 </article>
         </main>
