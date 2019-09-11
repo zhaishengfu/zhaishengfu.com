@@ -155,12 +155,12 @@
 <li>来自所有方向的光照射某个区域,因此也可以认为辐射照度和方向无关.如果要考虑方向的话,就必须用辐射亮度</li>
 <li>单位面积的功率</li>
 <li>\( E = \frac{d\Phi}{dA}\)</li>
-<li>图像辐射照度和场景中沿着相机方向的辐射亮度成正比,即使对于真实相机这也成立,而不仅仅局限于针孔相机<center> 
-
-</center></li>
+<li>图像辐射照度和场景中沿着相机方向的辐射亮度成正比,即使对于真实相机这也成立,而不仅仅局限于针孔相机</li>
 </ul>
-<p><img src="/2019/09/09/RadioMetry/irradiance.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.1: 所有方向的光照到某个区域.辐射照度是单位面积的光通量,也就是单位面积的功率</p>
+<center> 
 
+<p><img src="/2019/09/09/RadioMetry/irradiance.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.1: 所有方向的光照到某个区域.辐射照度是单位面积的光通量,也就是单位面积的功率</p>
+</center>
 
 <h3 id="辐射强度-R"><a href="#辐射强度-R" class="headerlink" title="辐射强度 R"></a>辐射强度 R</h3><ul>
 <li>博客中提到的光强</li>
@@ -184,7 +184,28 @@
 </ul>
 <center> 
 
-<p><img src="/2019/09/09/RadioMetry/geometry.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.2: 几何关系</p>
+<p><img src="/2019/09/09/RadioMetry/geometry.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.3: 几何关系</p>
+</center>
+
+<p>看完上面还是觉得不清楚?没关系.下面进入更详细的介绍.首先需要明白的是<br><strong><em>光是一种能量传输形式,所以光能的单位是焦耳J(joule)</em></strong><br>明白了这一点,接下来我们需要理解光的本质.当然这个问题直到今天都没有彻底弄清楚(波粒二象性也仅仅是一种”非常可能正确”的假说),但是并不妨碍我们基于一定假说基础的合理使用.</p>
+<h2 id="光谱能量-Spectral-Energy"><a href="#光谱能量-Spectral-Energy" class="headerlink" title="光谱能量 Spectral Energy"></a>光谱能量 Spectral Energy</h2><p>在辐射度学中,光被看做大量光子的集合.光子是具有位置,传播方向和波长的组成光的量子,光子在某种介质中传播具有速度,这个速度和介质的折射率\(n\)有关,并且无论何种介质中,光的速度和光的波长的比例总是常数.另外一个常数就是一个光子携带的能量\(q\).现在我们知道了两个常量:</p>
+<ul>
+<li>任何介质中光的速度\(c\)和光的波长\(\lambda\)的比例\(f\): \(f = \frac{c}{\lambda}\)</li>
+<li>光子携带的能量\(q\): \(q = hf = \frac{hc}{\lambda}\)</li>
+</ul>
+<p>光是大量光子的集合,一群光子的总能量\(Q\)是每个光子的能量\(q_i\)的总和.但是一群光子可能波长不同,所以怎么精确计算不同属性光子的能量呢?很简单,我们将波长人为划分成一段段区域,例如\(\lambda = 500nm - 600nm\),然后计算所有落入这个区间的光子的数目,然后就可以计算得到他们的能量.当然这并不是非常精确区间划分的越精细,最终计算结果就越准确.例如我们计算得到\(q[500,600] = 10.2J\),但是当我们继续划分区间为两个50nm的部分,可能会得到\(q[500,550] = 5.2J\), \(q[550,600] = 5.0J\).这种方法能量随着区间划分方法不同而不同,不太方便.另外一种更加常用的方法是将能量除以区间宽度,还是上面的书剑, 这种方法将得到<br>$$Q_\lambda [500, 600] = 10.2 / 100 = 0.12 J (nm)^{-1}$$<br>一种自然的想法就是将区间的宽度设置为无穷小,这样会得到理论上精确的结果.但是实际情况是这种方法不好,因为区间宽度非常小的时候,很有可能只有1个光子或者没有光子,这种情况计算得到的\(J (nm)^{-1}\)是不准确的.所以一种方法是假定\(\Delta\lambda\)很小,但是又不是特别小;另一种方法就是假定光是连续的而不是离散的光子,这样的话就会存在真正的\(\frac{dQ}{d\lambda}\). 实验室测量的时候通常采用第一种方法,而理论研究的时候通常采用第二种方法.<br>\(Q_\lambda\)称为光谱能量(<em>spectral energy</em>),其可以看做一种概率密度函数。注意光谱能量不是能量，而是能量在一定光的波长范围内的平均能量.</p>
+<h2 id="光谱功率-Spectral-Power"><a href="#光谱功率-Spectral-Power" class="headerlink" title="光谱功率 Spectral Power"></a>光谱功率 Spectral Power</h2><p>功率是能量产生的速率,即每秒钟产生的能量, 单位是瓦特W(<em>watts</em>).我们通过具体的例子来了解一下.我们平日经常说100W的灯泡, 假定光子平均假定是波长为500nm的光子,每个光子的能量是<br>$$hc/\lambda \approx 4 * 10^{-19} J$$<br>所以灯泡每秒产生的光子数目大约是\(10^{20}\)个(忽略热量消耗等).这可以解释快门的重要性,快门再快,在光子看来都是蜗牛般的速度.<br>对应光谱能量有光谱功率的概念, 单位是\(W(nm)^{-1}\).需要注意的一点是光谱功率通常比功率小很多.例如100W,以400nm~800nm均匀发射光源的灯泡,其光谱功率是<br>$$100W / 400 nm = 0.25W(nm)^{-1}$$.光谱功率一般用\(\Phi\)表示.</p>
+<h2 id="辐射照度-Irradiance"><a href="#辐射照度-Irradiance" class="headerlink" title="辐射照度 Irradiance"></a>辐射照度 Irradiance</h2><p>说了怎么多终于到了我们的辐射照度了.这个量怎么来的呢?因为我们非常常见的一个问题就是”到达某个点的光是多少?”这个问题的答案是:没有!!对于一个单独的点,没有光到达.正确的描述方法是密度函数.如果一个点在一个表面上面,我们会使用这个表面区域来定义我们的密度函数.我们用\(\Delta A\)表示这个区域的面积,用\(\Delta t\)表示一段时间,用\(\Delta \lambda\)表示之前提到的光谱范围,则光谱辐射照度 \(H\)为:<br>$$ H = \frac{\Phi}{\Delta A} = \frac{\Delta q}{\Delta \lambda \Delta t \Delta A}$$<br>所以辐射照度的完整单位是\(J (s)^{-1} m^{-2} (nm)^{-1}\)<br>如果更严格区分,到达某个点的辐射照度是辐射入照度, irradiance, 离开某个点的辐射照度是辐射出照度, radiant exitance, 通常用\(E\)表示</p>
+<h2 id="辐射亮度-Radiance"><a href="#辐射亮度-Radiance" class="headerlink" title="辐射亮度 Radiance"></a>辐射亮度 Radiance</h2><p>终于到了最重要的辐射亮度了.辐射照度告诉的是到达某个点的所有光,但他没办法区分不同方向的光.而现实中我们会发现不同角度观察的亮度是不同的.总是,我们需要将光的亮度和方向结合起来.</p>
+<center> 
+
+<p><img src="/2019/09/09/RadioMetry/irradiancedetector.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.4: 测量辐射亮度</p>
+</center>
+
+<p>考虑上图所示的一个测量装备.检测装备的一定区域 \(\Delta A \)会对入射光线进行响应,响应值为:<br>$$response = \frac{\Delta H}{\Delta \sigma} = \frac{\Delta q}{\Delta \lambda \Delta t \Delta A \Delta \sigma} $$<br>上图中的\(\Delta \sigma\)就是立体角,\(\Delta A\)是照明区域.<br>这就是光谱辐射亮度的意义.辐射亮度沿着直线传播的时候不会发生变化!如下图,假定光源均匀发射光,检测仪器正对光源平面.在相同时间内,时间差相同,光谱差相同,检测仪器面积也相同,立体角也相同!不同的是发射的能量区域. 但是实际虽然距离越远可接受的发光区域面积越大,但是接受到的功率也越少. 并且面积与距离的平方成正比,而功率随着距离的平方成反比,所以最终会导致到达检测装备的功率是一摸一样的!!所以上述响应值的所有五个变量都一样,也就是最终到达的辐射亮度是完全一样的!!!</p>
+<center> 
+
+<p><img src="/2019/09/09/RadioMetry/donotchangeradiance.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.5: 辐射亮度保持恒定</p>
 </center>
 
     </div>
