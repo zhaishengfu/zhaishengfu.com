@@ -125,7 +125,7 @@
     
     
     <h2 class="post-title">
-        辐射度学(Radiometry)
+        辐射度学(Radiometry)和BRDF
     </h2>
     <ul class="post-date">
         <li>
@@ -208,6 +208,23 @@
 <p><img src="/2019/09/09/RadioMetry/donotchangeradiance.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.5: 辐射亮度保持恒定</p>
 </center>
 
+<p>一个经常遇到的场景就是检测撞击某个表面的辐射亮度.如下图,我们在表面上的某个点放置辐射亮度检测器,然后放置一个锥形挡板.这样检测器将测量从挡板方向到达表面的辐射亮度.检测器和挡板没有对齐,有一定的角度.这种情况下的辐射亮度需要作用角度的衰减:<br>$$reponse = \frac{\Delta H}{\Delta \sigma cos\theta} = \frac{\Delta q}{\Delta \sigma \Delta A \Delta t \Delta \lambda cos \theta}$$</p>
+<center> 
+
+<p><img src="/2019/09/09/RadioMetry/cos.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.6: 辐射亮度和角度的关系</p>
+</center>
+
+<p>如果更仔细的分析一下,你会发现这个时候辐射亮度的变化是由于面积的变化导致的.立体角没有变化,面积增大导致辐射照度减少,从而导致辐射亮度减少.</p>
+<h3 id="辐射亮度可以推导出其他所有的辐射度量学的量"><a href="#辐射亮度可以推导出其他所有的辐射度量学的量" class="headerlink" title="辐射亮度可以推导出其他所有的辐射度量学的量"></a>辐射亮度可以推导出其他所有的辐射度量学的量</h3><p>例如,辐射照度可以有辐射亮度积分得到:<br>$$H = \int_{all\  \hat{k}} L_f(\hat{k}) cos \theta d\sigma$$<br>类似的,某个表面的总功率可以通过对辐射照度的积分求得:<br>$$\Phi = \int_{all \ \hat{x}} H(\hat{x}) dA$$</p>
+<h1 id="BRDF"><a href="#BRDF" class="headerlink" title="BRDF"></a>BRDF</h1><p>讲了这么多辐射度学知识,终于到了我们的重头戏BRDF.BRDF用来刻画表面如何反射光.直观来说,从任意方向\(\vec{k}_i\)入射的光照,在\(\vec{k}_o\)方向的一个小范围立体角内有一部分光进行了散射.如何检测这种属性呢?一种自然的想法是如下图,假设一个小的发光源以方向\(\vec{k}_i\)照射表面上的点,检测设备以方向\(\vec{k}_o\)放置.所有的方向对我们都用仪器进行测量.这样我们就可以检测得到所有反射的辐射信息了.</p>
+<center> 
+
+<p><img src="/2019/09/09/RadioMetry/BRDF.png" alt="&quot;采样重建&quot;" title="Optional title"><br>Fig.7: BRDF由来</p>
+</center>
+
+<p>这种最直接的方法有个问题,如果换一个更明亮的光源,反射的辐射信息也会更大,这样我们测量的信息就不能通用,依赖具体的光源.如果检测到的信息是辐射照度的话,没有办法达成这个目标,因为更亮的光源通常反射的辐射照度也更大.那我们将两者相除可以吗?例如平面上放置一个辐射照度检测器\(H1\),然后反射方向放置一个辐射照度检测器\(H2\),我们可以用<br>$$\frac{H2}{H1}$$<br>来表示表面的反射属性,并且让其独立于光源吗?可以,这种情况确实独立于光源了,更明亮的光源意味着更大的\(H1\),同时\(H2\)也会变大,所以最终比值独立于光源.但是又带来了新的问题:依赖于检测设备.举例来说如果我有一个新的不同立体角和不同监测面积的检测仪器,那么即使对于相同的光源,他们接受到的辐射照度是不同的.所以这种方法也不能通用的描述反射属性.<br>那么什么属性可以独立于检测设备呢?没错, 那就是辐射亮度!!!因为辐射亮度是单位立体角的辐射照度,所以上面的情况中立体角不同辐射照度也不同,而二者的比值保持恒定,所以对于光源不变的情况不同仪器得到的结果也是一样的!!!这样的话我们就总结出了一个独立于光源和检测设备的用来通用描述表面反射属性的公式:<br>$$ \rho = \frac{L_s}{H} $$<br>那么问题又来了, 可以用光源的辐射亮度和检测设备的辐射亮度的比值来通用描述吗?即:<br>$$ x = \frac{L_s}{L_r}$$<br>我们分析一下.对于不同的光源,他们的辐射亮度\(L_r\)不一样,同时检测设备的辐射亮度\(L_S\)也不一样,一个直观的问题是他们的比值是不是一样的??应该是一样的.虽然辐射亮度到辐射照度的积分有个角度衰减,但是这个是光源方向的关系,而不是不同光源的影响.所以这个也可以用来刻画表面反射属性,但是为什么不用他呢?因为没必要, 也不太可能实际这样测量.如果要得到入射和出射的辐射亮度,首先需要对大量的方向进行测量,工作量非常大;其次,我们往往不关心入射光的具体方向,在采样的时候我们会对出射光进行方向采样,所以知道出射方向的辐射亮度是必要的;但是不会对入射光进行方向采样,所以只需要知道入射光的辐射照度就足够了!!<br>而上面的\(\frac{出射辐射亮度}{入射辐射照度}\), 就是大名鼎鼎的BRDF!</p>
+<h3 id="方向半球反射率-Directional-Hemispherical-Reflectance"><a href="#方向半球反射率-Directional-Hemispherical-Reflectance" class="headerlink" title="方向半球反射率 Directional Hemispherical Reflectance"></a>方向半球反射率 Directional Hemispherical Reflectance</h3><p>经过上面的分析,我们对于BRDF应该有了深刻的理解.给定一个BRDF,我们最想知道的是”入射光反射的比例是多少?”.然而这个问题的答案并不简单,他取决于入射光的方向分布.对于方向为\(\vec{k}_i\) 的入射光,反射的比例是:<br>$$R(\vec{k}_i) = \frac{所有输出方向\vec{k}_o的功率}{入射方向\vec{k}_i的功率}$$<br>上面的比例叫做方向半球反射率,由于能量守恒所以范围是0~1.由于入射和出射的面积是相同的,所以其也可以表达成:<br>$$ R(\vec{k}_i) = \frac{E}{H} $$<br>即出射辐射照度和入射辐射照度的比例.<br>下面我们推导半球反射率和BRDF的关系.首先由BRDF的定义,我们可以得到:<br>$$L(\vec{k}_o) = H \rho(\vec{k}_i, \vec{k}_o)$$<br>而根据辐射亮度的定义,可以得到:<br>$$L(\vec{k}_o) = \frac{\Delta E}{\Delta \sigma_o cos\theta_o}$$<br>结合上面两个式子,再经过积分就可以得到:<br>$$ R(\vec{k}_i) =  \int _{\vec{k}_o} \rho(\vec{k}_i, \vec{o}_o) cos \theta_o d \sigma_o $$</p>
+
     </div>
 </article>
         </main>
@@ -217,7 +234,7 @@
                 
     <h1>Categories</h1>
 
-    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/渲染/">渲染</a></li></ul>
+    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/动画系统/">动画系统</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/渲染/">渲染</a></li></ul>
 
             </section>
             <section class="aside-section">
@@ -232,7 +249,7 @@
                 
     <h1>Tags</h1>
 
-    <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BSDF/">BSDF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Radiometry/">Radiometry</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pbrt/">pbrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/伪代码/">伪代码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/采样/">采样</a></li></ul>
+    <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Animation-System/">Animation System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BSDF/">BSDF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Low-Level/">Low Level</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Radiometry/">Radiometry</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pbrt/">pbrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/伪代码/">伪代码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/采样/">采样</a></li></ul>
 
             </section>
         </aside>
