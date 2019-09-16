@@ -151,7 +151,8 @@
 <li>曲线足够光滑</li>
 <li>时间复杂度不是很大</li>
 </ul>
-<p>我们采用埃尔米特曲线 <em>Hermite Spline</em>.\(t\)时刻的数据点\(D\)为:<br>$$(-\frac{t^3}{2} + t^2 - \frac{t}{2})D_{i-1} + (\frac{3t^3}{2} - \frac{5t^2 }{2} + 1)D_{i} +  (-\frac{3t^3}{2} +  2t^2 + \frac{t }{2} )D_{i+1} + (\frac{t^3}{2} - \frac{t^2 }{2} )D_{i+1} $$<br>这种方法总可以将误差限定于一定阈值,因为如果误差过大,只要二分即可.<br>动画压缩可以在局部空间和全局空间进行.全局空间的好处是误差不会在骨骼层级之间传播,所以当压缩动画的时候可以使用更大的误差阈值.但是另一方面全局空间的运动描述更加复杂.另一方面,动画混合等一般都是在局部空间进行.因而综合考虑,我们在局部空间进行动画压缩.<br>至于数据量化,对于三维向量,用16位表示每个部分,然后范围拟定-10m~10m,这样会得到0.3mm的分辨率</p>
+<p>我们采用埃尔米特曲线 <em>Hermite Spline</em>.\(t\)时刻的数据点\(D\)为:<br>$$(-\frac{t^3}{2} + t^2 - \frac{t}{2})D_{i-1} + (\frac{3t^3}{2} - \frac{5t^2 }{2} + 1)D_{i} +  (-\frac{3t^3}{2} +  2t^2 + \frac{t }{2} )D_{i+1} + (\frac{t^3}{2} - \frac{t^2 }{2} )D_{i+1} $$<br>这种方法总可以将误差限定于一定阈值,因为如果误差过大,只要二分即可.<br>动画压缩可以在局部空间和全局空间进行.全局空间的好处是误差不会在骨骼层级之间传播,所以当压缩动画的时候可以使用更大的误差阈值.但是另一方面全局空间的运动描述更加复杂.另一方面,动画混合等一般都是在局部空间进行.因而综合考虑,我们在局部空间进行动画压缩.<br>至于数据量化,对于三维向量,用16位表示每个部分,然后范围拟定-10m~10m,这样会得到0.3mm的分辨率<br>最后一点很重要的四元数,用2bits来储存最大部分的索引, 然后用10bits来表示剩下三个部分的值, 因为是单位复数,所以最大值可以求得.并且因为我们保存的不是最大值,所以三个部分的值的范围必定是\((-1/\sqrt2, 1/\sqrt2)\).而我们用10bits来量化,所以精度是0.0014.<br>我们现在总结一下:曲线上每个三维向量点用48bits表示,每个曲线点量化用32bits表示(2 + 3 * 10),然后16bits表示时间戳.<br>剩下的问题就是,如果将所有骨骼的所有曲线点以一种友好的缓存获取方式压缩.</p>
+<h2 id="友好缓存访问"><a href="#友好缓存访问" class="headerlink" title="友好缓存访问"></a>友好缓存访问</h2><p>每个动作包含多个轨迹(track).每个轨迹包含时间和对应的数据.最简单我们考虑一个时刻\(t\)的数据需要前面和后面的时刻数据来确定.</p>
 
     </div>
 </article>
@@ -162,7 +163,7 @@
                 
     <h1>Categories</h1>
 
-    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/动画系统/">动画系统</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/渲染/">渲染</a></li></ul>
+    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/动画系统/">动画系统</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/基础数学/">基础数学</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/渲染/">渲染</a></li></ul>
 
             </section>
             <section class="aside-section">
@@ -177,7 +178,7 @@
                 
     <h1>Tags</h1>
 
-    <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Animation-System/">Animation System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BSDF/">BSDF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Low-Level/">Low Level</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Radiometry/">Radiometry</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pbrt/">pbrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/伪代码/">伪代码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/采样/">采样</a></li></ul>
+    <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Animation-System/">Animation System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BSDF/">BSDF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Low-Level/">Low Level</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Radiometry/">Radiometry</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pbrt/">pbrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/三维运算/">三维运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/伪代码/">伪代码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/采样/">采样</a></li></ul>
 
             </section>
         </aside>

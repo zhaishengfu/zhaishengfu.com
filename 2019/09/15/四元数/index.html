@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta name="keywords" content>
+    <title>
+        zhaishengfu
+    </title>
+    <!-- favicon -->
+     <link rel="stylesheet" href="/css/style.css">
+
+    <!-- highlight -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/github-gist.min.css">
+    <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+    <script>
+        hljs.initHighlightingOnLoad()
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/frontendsophie/hexo-infinite-scroll@2.0.0/dist/main.js"></script>
+
+    <script>
+        infiniteScroll()
+
+        window.addEventListener('DOMContentLoaded', function () {
+            const [
+                mainTitle,
+                mobileMenu,
+                mobileMainTitle,
+                mobileMenuBtn,
+                ipadMenuBtn,
+                aside,
+                closeBtn,
+            ] = getEle(
+                '#main-title',
+                '.mobile-menu',
+                '.mobile-menu h3',
+                '.mobile-menu button',
+                '.ipad-menu',
+                'aside',
+                'aside .close',
+            )
+            const io = new IntersectionObserver(entries => {
+                if (entries[0].intersectionRatio <= 0) {
+                    mobileMainTitle.classList.remove('invisibile')
+                } else {
+                    mobileMainTitle.classList.add('invisibile')
+                }
+            })
+            io.observe(mainTitle)
+
+            clickToggleAside(mobileMenuBtn)
+            clickToggleAside(ipadMenuBtn)
+            clickToggleAside(closeBtn, false)
+
+            const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+            if (isMenuVisible) document.body.style.background = 'none'
+
+            function getEle(...args) {
+                return args.map(arg => document.querySelector(arg))
+            }
+
+            function clickToggleAside(btn, show = true) {
+                btn.addEventListener('click', function () {
+                    if (show) {
+                        aside.style.display = 'block'
+                    } else {
+                        aside.style.display = 'none'
+                    }
+                })
+            }
+        })
+    </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
+        <h3 class="invisibile">
+            <a href="/" class="logo">
+                zhaishengfu
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/" class="logo">
+            zhaishengfu
+        </a>
+    </h1>
+    <h2 class="desc">
+        Math / Render / Game
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="https://blog.csdn.net/zhaishengfu">
+                    CSDN
+                </a>
+            </li>
+            
+            <li>
+                <a href="/zhaishengfu@gmail.com">
+                    EMail
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+        <main class="main">
+            <article class="post">
+    
+    
+    <h4 class="post-cat">
+        <a href="/categories/基础数学/">
+            基础数学
+        </a>
+    </h4>
+    
+    
+    <h2 class="post-title">
+        四元数
+    </h2>
+    <ul class="post-date">
+        <li>
+            2019-09-15
+        </li>
+        <li>
+            翟升富
+        </li>
+    </ul>
+    <div class="post-content">
+        <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<p>Motivation: 三维空间的变化是许多涉及三维展示引擎的核心组件之一. 三维的平移旋转缩放是最常见的三维变化. 其中旋转是最复杂的变换. 利用普通的欧拉角等进行旋转非常直观, 但是会存在死锁等潜在问题. 而四元数可以非常好地应用于三维旋转中.</p>
+<h2 id="复数"><a href="#复数" class="headerlink" title="复数"></a>复数</h2><p>介绍四元数之前先了解复数 <em>Complex Number</em>. 负数\(z\)的定义是:<br>$$z = a+ b \textbf{i}, 其中\textbf{i}^2 = -1$$<br>我们可以将其看做一个基为\((1, \textbf{i})\)的线性组合, 其对应的坐标是\((a, b)\)<br>复数运算满足分配率. 加入\(z_1 = a+ b \textbf{i}\), \(z_2 = c+ d \textbf{i}\), 那么<br>$$z_1z_2 = (a+ b \textbf{i})(c+ d \textbf{i}) = ac + ad\textbf{i} + bc\textbf{i} - bd = (ac-bd) + (ad+bc)\textbf{i} $$<br>如果我们表达成矩阵形式, 则是:<br>$$\begin{bmatrix}<br>   a &amp; -b \\<br>   b &amp; a \\<br>  \end{bmatrix}<br>  \begin{bmatrix}<br>   c \\<br>   d<br>  \end{bmatrix} \tag{1} $$</p>
+<p>或者:<br>$$\begin{bmatrix}<br>   c &amp; -d \\<br>   d &amp; c \\<br>  \end{bmatrix}<br>  \begin{bmatrix}<br>   a \\<br>  b<br>  \end{bmatrix} \tag{2} $$</p>
+<p>我们随便看一个, 例如看第一个, 右边的向量就是\(z_2\)的向量, 而左边的矩阵可以看做某种变换(矩阵形式), 也就是说, 两个复数相乘相当于对其中一个复数进行了某种变换. 当我们将两个复数向量都变成矩阵形式时, 可得:<br>$$z_1z_2=<br>\begin{bmatrix}<br>   a &amp; -b \\<br>   b &amp; a \\<br>  \end{bmatrix}<br>  \begin{bmatrix}<br>  c &amp; -d \\<br>   d &amp; c \\<br>  \end{bmatrix} =<br>  \begin{bmatrix}<br>  ac-bd &amp; -(ad+bc) \\<br>   ad+bc &amp; ac-bd \\<br>  \end{bmatrix}$$<br>很容易就可以计算得到.\(z_1z_2=z_2z_1\)</p>
+<h2 id="复数相乘和2D旋转"><a href="#复数相乘和2D旋转" class="headerlink" title="复数相乘和2D旋转"></a>复数相乘和2D旋转</h2><p>我们已经知道复数相乘代表一个矩阵形式作出的变换<br>$$\begin{bmatrix}<br>   a &amp; -b \\<br>   b &amp; a \\<br>  \end{bmatrix} $$<br>, 那么这个矩阵变换代表着什么呢? 我们将其作用于模长, 即可很容易看出来:</p>
+<center> 
+
+<p><img src="/2019/09/15/四元数/2Drot.png" alt="&quot;采样重建&quot;" title="Optional title"></p>
+<p>Fig.1: 复数的矩阵形式的意义</p>
+</center>
+
+<p>没错, 这实际上相当于:<br>$$\begin{bmatrix}<br>   a &amp; -b \\<br>   b &amp; a \\<br>  \end{bmatrix} =  ||z||<br>  \begin{bmatrix}<br>   cos\theta &amp; -sin\theta \\<br>   sin\theta &amp; cos\theta \\<br>  \end{bmatrix}$$<br>所以, 复数相乘实际上就是旋转与缩放变换的组合. 缩放因子是\(|z|\), 旋转角度是\(\theta = atan2(b, a)\).<br>所以2D旋转公式是:<br>$$\vec{v}’ = \begin{bmatrix}<br>  cos\theta &amp; -sin\theta \\<br>   sin\theta &amp; cos\theta \\<br>  \end{bmatrix} \vec{v} = (cos\theta + \textbf{i}sin\theta) \vec{v}$$</p>
+<h2 id="欧拉公式和极坐标"><a href="#欧拉公式和极坐标" class="headerlink" title="欧拉公式和极坐标"></a>欧拉公式和极坐标</h2><p>接下来就是伟大的欧拉公式了!<br>$$(cos\theta + \textbf{i}sin\theta) = e^{\textbf{i}\theta}$$</p>
+<h2 id="三维空间旋转"><a href="#三维空间旋转" class="headerlink" title="三维空间旋转"></a>三维空间旋转</h2><p>我们假设旋转轴\(\vec{u}\)是单位向量, 某个向量\(\vec{v}\)绕着其旋转\(\theta\)角度变换到\(\vec{v}\), 如何变换呢?<br>我们将\(\vec{v}\)分解成平行和垂直于旋转轴的两个向量\(\vec{v}_{\parallel}\)  和 \(\vec{v} _{\perp}\). 由于旋转轴是单位向量, 可以得到<br>$$\vec{v}_\parallel = (\vec{u}\cdot\vec{v})\vec{u}$$<br>可以很清楚看到平行方面投影的向量不变, 唯一改变的是垂直方向的.</p>
+<center> 
+
+<p><img src="/2019/09/15/四元数/paandvert.png" alt="&quot;采样重建&quot;" title="Optional title"></p>
+<p>Fig.2: 平行投影和垂直投影</p>
+</center>
+我们很容易就可以得到:
+$$ \vec{w} = \vec{u} \times \vec{v}_\perp$$
+将垂直方向投影表达成新的投影组合:
+$$\vec{v}'_\perp = cos\theta \cdot {\vec{v}_\perp} + sin\theta \cdot \vec{w} $$
+
+<p>我们将上面组合起来即可得到最终\(\vec{v}\)的旋转\(\vec{v}’\)<br>$$\vec{v}’ = \vec{v}’_\parallel + \vec{v}’_\perp =  \vec{v}_\parallel + cos\theta \cdot {\vec{v}_\perp} + sin\theta \cdot \vec{w}<br> =  \vec{v}_\parallel + cos\theta \cdot {\vec{v}_\perp} + sin\theta \cdot  (\vec{u} \times \vec{v}_\perp) \tag{1} $$<br>可以得到<br>$$(\vec{u} \times \vec{v}_\perp) =\vec{u} \times (\vec{v} - \vec{v}_\parallel) = \vec{u} \times \vec{v} $$<br>$$\vec{v}_\perp = \vec{v} - \vec{v}_\parallel =  \vec{v} - (\vec{u}\cdot\vec{v})\vec{u}$$<br>将相关值带入(1)公式, 最终我们可以得到:<br>$$\vec{v}’ = (\vec{u}\cdot\vec{v})\vec{u} + cos\theta \cdot (\vec{v} - (\vec{u}\cdot\vec{v})\vec{u}) + sin\theta \cdot (\vec{u} \times \vec{v}) \tag{2}$$</p>
+<h2 id="四元数"><a href="#四元数" class="headerlink" title="四元数"></a>四元数</h2><p>上面的式子看起来很复杂, 其实不然. 四元数的定义和复数非常接近, 唯一区别是四元数一共有三个虚部, 而复数只有一个. 所有的四元数\(q \in \mathbb{H}\)都可以写成下面格式:<br>$$q = a +b\textbf{i} + c\textbf{j} + d\textbf{k}, 其中a, b, c, d \in \mathbb{R}\ 并且\textbf{i}^2 = \textbf{j}^2 = \textbf{k}^2 = \textbf{i}\textbf{j}\textbf{k} = -1$$<br>四元数还有一种将实部和虚部分开的表示方法, 用三维向量表示虚部<br>$$q = [s, \vec{v}] , 其中\vec{v} =<br>\begin{bmatrix}<br>    x \\<br>    y \\<br>    z<br>\end{bmatrix},  并且s, x, y, z \in \mathbb{R}$$</p>
+<p>四元数和复数不同的一点是, 其不满足交换律, 即\(q_1q_2 \ne q_2q_1\), 前者称为\({“q_2左乘以q_1”}\). 假设\(q_1 =  a +b\textbf{i} + c\textbf{j} + d\textbf{k}\), \(q_2 =  e +f\textbf{i} + g\textbf{j} + h\textbf{k}\), 则他们的乘积化简可得:<br>$$q_1q_2 = (ae-bf-cg-dh) + (be+af-dg+ch)\textbf{i} + (ce+df+ag-bh)\textbf{j}  + (de-cf+bg+ah)\textbf{k}$$</p>
+<center> 
+
+<p><img src="/2019/09/15/四元数/mul.png" alt="&quot;采样重建&quot;" title="Optional title"></p>
+<p>Fig.3: 不满足交换律</p>
+</center>
+我们将其表示成矩阵形式, 就会发现其实四元数相乘也是一个线性组合:
+
+<p>$$q_1q_2 =<br>\begin{bmatrix}<br>    a &amp; -b &amp; -c &amp; -d \\<br>    b &amp; a &amp; -d &amp; c \\<br>    c &amp; d &amp; a &amp; -b \\<br>    d &amp; -c &amp; b &amp; a<br>\end{bmatrix}<br>\begin{bmatrix}<br>    e\\<br>    f \\<br>    g \\<br>    h<br>\end{bmatrix} $$<br>类似的过程,右乘\(q_1\)会得到:</p>
+<p>$$q_2q_1 =<br>\begin{bmatrix}<br>    a &amp; -b &amp; -c &amp; -d \\<br>    b &amp; a &amp; d &amp; -c \\<br>    c &amp; -d &amp; a &amp; b \\<br>    d &amp; c &amp; -b &amp; a<br>\end{bmatrix}<br>\begin{bmatrix}<br>    e\\<br>    f \\<br>    g \\<br>    h<br>\end{bmatrix} $$<br>现在我们令\(\vec{v} = \begin{bmatrix}<br>    b  \\<br>    c \\<br>    d<br>\end{bmatrix}\), 令\(\vec{u} = \begin{bmatrix}<br>    f  \\<br>    g \\<br>    h<br>\end{bmatrix}\), 则最终我们可以用二者的点乘和叉乘来表示四元数的乘积:<br>$$q_1q_2 = [ae - \vec{v}\vec{u}, a\vec{u}+e\vec{v} + \vec{v} \times \vec{u}$$<br>这个结果也叫作\(\textbf{GraBmann积}\)<br>下面介绍纯四元数,即实部为0.纯四元数的虚部可以和三维向量一一对应,并且假设\(\textbf{v} = [0, \vec{v}]\),\(\textbf{u} = [0, \vec{u}]\),那么<br>$$\textbf{v}\textbf{v} = [ -\vec{v}\cdot \vec{u}, \vec{v} \times \vec{u} ]$$</p>
+<h2 id="四元数和3D旋转"><a href="#四元数和3D旋转" class="headerlink" title="四元数和3D旋转"></a>四元数和3D旋转</h2><p>我们知道了3D旋转的表达,也知道了纯四元数可以和三维相对对应,所以可以用四元数来表达3D旋转.</p>
+<p>$$ \vec{v} = [0, \textbf{v}],  \vec{v}’ = [0, \textbf{v}’] \\<br> \vec{v}_{\perp} = [0, \textbf {v} _{\perp}],  \vec{v}’ _{\perp} = [0, \textbf {v}’ _{\perp}]<br>$$</p>
+<p>$$ \vec{v}_{\parallel} = [0, \textbf {v} _{\parallel}],  \vec{v}’ _{\parallel} = [0, \textbf {v}’ _{\parallel}] \\<br>\vec{u} = [0, \textbf{u}]<br>$$</p>
+
+    </div>
+</article>
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+    <h1>Categories</h1>
+
+    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/动画系统/">动画系统</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/基础数学/">基础数学</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/渲染/">渲染</a></li></ul>
+
+            </section>
+            <section class="aside-section">
+                
+    <h1>Archives</h1>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h1>Tags</h1>
+
+    <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Animation-System/">Animation System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BSDF/">BSDF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Low-Level/">Low Level</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Radiometry/">Radiometry</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pbrt/">pbrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/三维运算/">三维运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/伪代码/">伪代码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/采样/">采样</a></li></ul>
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>
